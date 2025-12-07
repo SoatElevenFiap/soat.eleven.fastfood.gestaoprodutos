@@ -18,6 +18,8 @@ public class CategoriaProduto
     }
     public string? Descricao { get; set; }
     public bool Ativo { get; set; } = true;
+    public DateTime CriadoEm { get; set; }
+    public DateTime ModificadoEm { get; set; }
 
     public ICollection<Produto> Produtos { get; set; } = new List<Produto>();
 }

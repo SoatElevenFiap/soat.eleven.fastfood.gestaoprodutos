@@ -16,7 +16,7 @@ public class Produto
             nome = value;
         }
     }
-    private string sku;
+    private string sku = string.Empty;
 
     public string SKU
     {
@@ -29,8 +29,10 @@ public class Produto
     public string? Descricao { get; set; }
     public decimal Preco { get; set; }
     public Guid CategoriaId { get; set; }
-    public bool Ativo { get; set; }
-    public DateTime CriadoEm { get; set; }
+    public bool Ativo { get; set; }    
     public string? Imagem { get; set; }
+    public DateTime CriadoEm { get; set; }
+    public DateTime ModificadoEm { get; set; }
+
     public CategoriaProduto Categoria { get; set; } = null!;
 }

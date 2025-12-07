@@ -1,8 +1,6 @@
-using Soat.Eleven.FastFood.GestaoProdutos.Core.DTOs.Images;
 using Soat.Eleven.FastFood.GestaoProdutos.Core.DTOs.Produtos;
 using Soat.Eleven.FastFood.GestaoProdutos.Core.Entities;
 using Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways;
-using Soat.Eleven.FastFood.GestaoProdutos.Core.Interfaces.Services;
 
 namespace Soat.Eleven.FastFood.Core.UseCases
 {
@@ -25,11 +23,6 @@ namespace Soat.Eleven.FastFood.Core.UseCases
             CategoriaProdutoGateway categoriaProdutoGateway)
         {
             return new ProdutoUseCase(produtoGateway, categoriaProdutoGateway);
-        }
-
-        private async Task<string> ObterUrlCompleta(string nomeImagem, IArmazenamentoArquivoGateway armazenamentoArquivoGateway)
-        {
-            return await armazenamentoArquivoGateway.ObterUrlImagemAsync(DIRETORIO_IMAGENS, nomeImagem);
         }
 
         public async Task<IEnumerable<Produto>> ListarProdutos(bool? incluirInativos = false, Guid? categoryId = null)
@@ -149,29 +142,6 @@ namespace Soat.Eleven.FastFood.Core.UseCases
                 throw new ArgumentException("Produto não encontrado");
 
             produto.Ativo = true;
-            await _produtoGateway.AtualizarProduto(produto);
-        }
-
-        public async Task<string> UploadImagemAsync(Guid produtoId, ImagemProdutoArquivo imagem, IArmazenamentoArquivoGateway armazenamentoArquivoGateway)
-        {
-            var produto = await _produtoGateway.ObterProdutoPorId(produtoId);
-            if (produto == null)
-                throw new ArgumentException("Produto não encontrado");
-
-            var nomeArquivo = await armazenamentoArquivoGateway.UploadImagemAsync(DIRETORIO_IMAGENS, produtoId.ToString(), imagem);
-            produto.Imagem = nomeArquivo;
-            await _produtoGateway.AtualizarProduto(produto);
-            return nomeArquivo;
-        }
-
-        public async Task RemoverImagemAsync(Guid produtoId, IArmazenamentoArquivoGateway armazenamentoArquivoGateway)
-        {
-            var produto = await _produtoGateway.ObterProdutoPorId(produtoId);
-            if (produto == null)
-                throw new ArgumentException("Produto não encontrado");
-
-            await armazenamentoArquivoGateway.RemoverImagemAsync(DIRETORIO_IMAGENS, produtoId.ToString());
-            produto.Imagem = null;
             await _produtoGateway.AtualizarProduto(produto);
         }
     }
