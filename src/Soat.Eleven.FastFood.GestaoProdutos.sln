@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36511.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soat.Eleven.FastFood.GestaoProdutos.Core", "Soat.Eleven.FastFood.GestaoProdutos.Core\Soat.Eleven.FastFood.GestaoProdutos.Core.csproj", "{0EB57FBE-F87A-4A20-A957-377A7F48FCBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi", "Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi\Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.csproj", "{845AFB13-870A-46ED-85A1-D1C33EC68247}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra", "Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra\Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.csproj", "{0EA00CE4-660A-4FB9-AAD1-EEA58DD18645}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soat.Eleven.FastFood.GestaoProdutos.Application", "Soat.Eleven.FastFood.GestaoProdutos.Application\Soat.Eleven.FastFood.GestaoProdutos.Application.csproj", "{86CBB132-D678-4309-89D1-8A3675EB4C58}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0EB57FBE-F87A-4A20-A957-377A7F48FCBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EB57FBE-F87A-4A20-A957-377A7F48FCBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EB57FBE-F87A-4A20-A957-377A7F48FCBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EB57FBE-F87A-4A20-A957-377A7F48FCBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{845AFB13-870A-46ED-85A1-D1C33EC68247}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{845AFB13-870A-46ED-85A1-D1C33EC68247}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{845AFB13-870A-46ED-85A1-D1C33EC68247}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{845AFB13-870A-46ED-85A1-D1C33EC68247}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EA00CE4-660A-4FB9-AAD1-EEA58DD18645}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EA00CE4-660A-4FB9-AAD1-EEA58DD18645}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EA00CE4-660A-4FB9-AAD1-EEA58DD18645}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EA00CE4-660A-4FB9-AAD1-EEA58DD18645}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86CBB132-D678-4309-89D1-8A3675EB4C58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86CBB132-D678-4309-89D1-8A3675EB4C58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86CBB132-D678-4309-89D1-8A3675EB4C58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86CBB132-D678-4309-89D1-8A3675EB4C58}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {10ECE600-C0AD-4B69-A641-0CC3D87C5C34}
+	EndGlobalSection
+EndGlobal
