@@ -1,7 +1,7 @@
 ﻿using Soat.Eleven.FastFood.GestaoProdutos.Core.Entities;
 using Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways;
 
-namespace Soat.Eleven.FastFood.Core.UseCases;
+namespace Soat.Eleven.FastFood.GestaoProdutos.Core.UsesCases;
 
 public class CategoriaProdutoUseCase
 {

@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Soat.Eleven.FastFood.GestaoProdutos.Core\Soat.Eleven.FastFood.GestaoProdutos.Core.csproj" />
+  </ItemGroup>
+
 </Project>
