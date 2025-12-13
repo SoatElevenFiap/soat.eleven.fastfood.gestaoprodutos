@@ -72,7 +72,6 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.UsesCases
                 Preco = produtoDto.Preco,
                 CategoriaId = produtoDto.CategoriaId,
                 Ativo = true,
-                CriadoEm = DateTime.UtcNow,
                 Imagem = produtoDto.Imagem
             };
 

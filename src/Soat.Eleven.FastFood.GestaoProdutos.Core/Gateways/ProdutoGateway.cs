@@ -24,7 +24,6 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways
                 Preco = produto.Preco,
                 CategoriaId = produto.CategoriaId,
                 Ativo = produto.Ativo,
-                CriadoEm = produto.CriadoEm,
                 Imagem = produto.Imagem
             };
 
@@ -42,7 +41,6 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways
                 Preco = produto.Preco,
                 CategoriaId = produto.CategoriaId,
                 Ativo = produto.Ativo,
-                CriadoEm = produto.CriadoEm,
                 Imagem = produto.Imagem
             };
 
@@ -65,7 +63,6 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways
                 Preco = produtoDto.Preco,
                 CategoriaId = produtoDto.CategoriaId,
                 Ativo = produtoDto.Ativo,
-                CriadoEm = produtoDto.CriadoEm,
                 Imagem = produtoDto.Imagem
             };
 
@@ -85,7 +82,6 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways
                 Preco = p.Preco,
                 CategoriaId = p.CategoriaId,
                 Ativo = p.Ativo,
-                CriadoEm = p.CriadoEm,
                 Imagem = p.Imagem
             });
 
@@ -112,7 +108,6 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways
                 Preco = p.Preco,
                 CategoriaId = p.CategoriaId,
                 Ativo = p.Ativo,
-                CriadoEm = p.CriadoEm,
                 Imagem = p.Imagem
             });
 

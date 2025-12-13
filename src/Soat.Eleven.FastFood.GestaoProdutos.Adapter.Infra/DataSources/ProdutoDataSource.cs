@@ -108,7 +108,6 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.DataSources
                 Preco = dto.Preco,
                 CategoriaId = dto.CategoriaId,
                 Ativo = dto.Ativo,
-                CriadoEm = dto.CriadoEm,
                 Imagem = dto.Imagem
             };
             return model;
@@ -125,8 +124,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.DataSources
                 CategoriaId = model.CategoriaId,
                 Ativo = model.Ativo,
                 SKU = model.SKU,
-                Imagem = model.Imagem,
-                CriadoEm = model.CriadoEm
+                Imagem = model.Imagem
             };
         }
     }
