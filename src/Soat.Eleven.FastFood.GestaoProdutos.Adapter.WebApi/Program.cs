@@ -22,8 +22,18 @@ builder.Services.AddLogging(loggingBuilder =>
 });
 
 // Add services to the container.
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnectionString")));
+if (builder.Environment.IsEnvironment("Testing"))
+{
+    // Use InMemory database for testing
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseInMemoryDatabase("TestDatabase"));
+}
+else
+{
+    // Use PostgreSQL for production
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnectionString")));
+}
 
 builder.Services.AddCors();
 
@@ -83,3 +93,6 @@ app.MapHealthChecks("/health");
 app.MapControllers();
 
 app.Run();
+
+// Make the Program class public for testing
+public partial class Program { }

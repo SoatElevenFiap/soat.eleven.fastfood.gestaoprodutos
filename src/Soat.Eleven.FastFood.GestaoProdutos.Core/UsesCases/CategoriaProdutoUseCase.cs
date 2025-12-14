@@ -1,18 +1,18 @@
 ﻿using Soat.Eleven.FastFood.GestaoProdutos.Core.Entities;
-using Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways;
+using Soat.Eleven.FastFood.GestaoProdutos.Core.Interfaces.Gateways;
 
 namespace Soat.Eleven.FastFood.GestaoProdutos.Core.UsesCases;
 
 public class CategoriaProdutoUseCase
 {
-    private readonly CategoriaProdutoGateway _categoriaGateway;
+    private readonly ICategoriaProdutoGateway _categoriaGateway;
 
-    private CategoriaProdutoUseCase(CategoriaProdutoGateway categoriaGateway)
+    private CategoriaProdutoUseCase(ICategoriaProdutoGateway categoriaGateway)
     {
         _categoriaGateway = categoriaGateway;
     }
 
-    public static CategoriaProdutoUseCase Create(CategoriaProdutoGateway categoriaGateway)
+    public static CategoriaProdutoUseCase Create(ICategoriaProdutoGateway categoriaGateway)
     {
         return new CategoriaProdutoUseCase(categoriaGateway);
     }

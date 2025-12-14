@@ -28,7 +28,7 @@ public class ErrorExceptionHandlingMiddleware
 
             HttpStatusCode code;
             string messageError = exception.Message;
-            switch (exception.InnerException)
+            switch (exception)
             {
                 case KeyNotFoundException
                     or FileNotFoundException:
@@ -47,7 +47,29 @@ public class ErrorExceptionHandlingMiddleware
                     messageError = "Serviço indisponível. Falha ao conectar no banco de dados. Tente novamente.";
                     break;
                 default:
-                    code = HttpStatusCode.InternalServerError;
+                    // Check inner exception if the main exception doesn't match
+                    switch (exception.InnerException)
+                    {
+                        case KeyNotFoundException
+                            or FileNotFoundException:
+                            code = HttpStatusCode.NotFound;
+                            break;
+                        case UnauthorizedAccessException:
+                            code = HttpStatusCode.Unauthorized;
+                            break;
+                        case ArgumentException
+                            or InvalidOperationException
+                            or FormatException:
+                            code = HttpStatusCode.BadRequest;
+                            break;
+                        case Npgsql.NpgsqlException:
+                            code = HttpStatusCode.ServiceUnavailable;
+                            messageError = "Serviço indisponível. Falha ao conectar no banco de dados. Tente novamente.";
+                            break;
+                        default:
+                            code = HttpStatusCode.InternalServerError;
+                            break;
+                    }
                     break;
             }
 
