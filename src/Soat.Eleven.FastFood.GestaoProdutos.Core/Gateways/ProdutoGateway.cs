@@ -1,10 +1,11 @@
 ﻿using Soat.Eleven.FastFood.GestaoProdutos.Core.DTOs.Produtos;
 using Soat.Eleven.FastFood.GestaoProdutos.Core.Entities;
 using Soat.Eleven.FastFood.GestaoProdutos.Core.Interfaces.DataSources;
+using Soat.Eleven.FastFood.GestaoProdutos.Core.Interfaces.Gateways;
 
 namespace Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways
 {
-    public class ProdutoGateway
+    public class ProdutoGateway : IProdutoGateway
     {
         private IProdutoDataSource _produtoDataSource;        
 

@@ -1,26 +1,26 @@
 using Soat.Eleven.FastFood.GestaoProdutos.Core.DTOs.Produtos;
 using Soat.Eleven.FastFood.GestaoProdutos.Core.Entities;
-using Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways;
+using Soat.Eleven.FastFood.GestaoProdutos.Core.Interfaces.Gateways;
 
 namespace Soat.Eleven.FastFood.GestaoProdutos.Core.UsesCases
 {
     public class ProdutoUseCase
     {
-        private readonly ProdutoGateway _produtoGateway;
-        private readonly CategoriaProdutoGateway _categoriaProdutoGateway;
+        private readonly IProdutoGateway _produtoGateway;
+        private readonly ICategoriaProdutoGateway _categoriaProdutoGateway;
         private const string DIRETORIO_IMAGENS = "produtos";
 
         private ProdutoUseCase(
-            ProdutoGateway produtoGateway,
-            CategoriaProdutoGateway categoriaProdutoGateway)
+            IProdutoGateway produtoGateway,
+            ICategoriaProdutoGateway categoriaProdutoGateway)
         {
             _produtoGateway = produtoGateway;
             _categoriaProdutoGateway = categoriaProdutoGateway;
         }
 
         public static ProdutoUseCase Create(
-            ProdutoGateway produtoGateway,
-            CategoriaProdutoGateway categoriaProdutoGateway)
+            IProdutoGateway produtoGateway,
+            ICategoriaProdutoGateway categoriaProdutoGateway)
         {
             return new ProdutoUseCase(produtoGateway, categoriaProdutoGateway);
         }
@@ -53,10 +53,6 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.UsesCases
         public async Task<Produto?> ObterProdutoPorId(Guid id)
         {
             var produto = await _produtoGateway.ObterProdutoPorId(id);
-
-            if (produto is null)
-                throw new KeyNotFoundException();
-
             return produto;
         }
 
@@ -95,29 +91,18 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.UsesCases
 
         public async Task<Produto> AtualizarProduto(AtualizarProdutoDto produtoDto)
         {
-            var produto = new Produto
-            {
-                Id = Guid.NewGuid(),
-                Nome = produtoDto.Nome,
-                SKU = produtoDto.SKU,
-                Descricao = produtoDto.Descricao,
-                Preco = produtoDto.Preco,
-                CategoriaId = produtoDto.CategoriaId,
-                Ativo = true,
-                CriadoEm = DateTime.UtcNow,
-                Imagem = produtoDto.Imagem
-            };
-
-            var produtoExistente = await _produtoGateway.ObterProdutoPorId(produto.Id);
+            var produtoExistente = await _produtoGateway.ObterProdutoPorId(produtoDto.Id);
             if (produtoExistente == null)
                 throw new KeyNotFoundException("Produto não encontrado");
 
-            if (produto.Preco <= 0)
+            if (produtoDto.Preco <= 0)
                 throw new ArgumentException("O preço do produto deve ser maior que zero");
 
-            produtoExistente.Nome = produto.Nome;
-            produtoExistente.Descricao = produto.Descricao;
-            produtoExistente.Preco = produto.Preco;
+            produtoExistente.Nome = produtoDto.Nome;
+            produtoExistente.Descricao = produtoDto.Descricao;
+            produtoExistente.Preco = produtoDto.Preco;
+            produtoExistente.CategoriaId = produtoDto.CategoriaId;
+            produtoExistente.Imagem = produtoDto.Imagem;
 
             await _produtoGateway.AtualizarProduto(produtoExistente);
 
@@ -128,7 +113,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.UsesCases
         {
             var produto = await _produtoGateway.ObterProdutoPorId(id);
             if (produto == null)
-                throw new ArgumentException("Produto não encontrado");
+                throw new KeyNotFoundException("Produto não encontrado");
 
             produto.Ativo = false;
             await _produtoGateway.AtualizarProduto(produto);
@@ -138,7 +123,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.UsesCases
         {
             var produto = await _produtoGateway.ObterProdutoPorId(id);
             if (produto == null)
-                throw new ArgumentException("Produto não encontrado");
+                throw new KeyNotFoundException("Produto não encontrado");
 
             produto.Ativo = true;
             await _produtoGateway.AtualizarProduto(produto);
