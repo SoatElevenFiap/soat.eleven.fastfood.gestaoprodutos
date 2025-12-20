@@ -63,7 +63,7 @@ jobs:
           ./.sonar/scanner/dotnet-sonarscanner begin \
             /k:"SoatElevenFiap_soat.eleven.fastfood.gestaoprodutos" \
             /o:"soatelevenfiap" \
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.token="${SONAR_TOKEN}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/*/coverage.opencover.xml" \
             /d:sonar.exclusions="**/Migrations/**"
@@ -77,4 +77,4 @@ jobs:
             -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
           
           ./.sonar/scanner/dotnet-sonarscanner end \
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+            /d:sonar.token="${SONAR_TOKEN}"
