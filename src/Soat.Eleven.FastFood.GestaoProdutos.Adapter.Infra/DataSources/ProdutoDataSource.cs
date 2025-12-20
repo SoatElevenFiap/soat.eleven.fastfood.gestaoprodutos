@@ -17,9 +17,9 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.DataSources
             _dbSet = _context.Set<ProdutoModel>();
         }
 
-        public async Task AddAsync(ProdutoDto dto)
+        public async Task AddAsync(ProdutoDto produto)
         {
-            var model = Parse(dto);
+            var model = Parse(produto);
             await _dbSet.AddAsync(model);
             await _context.SaveChangesAsync();
         }
@@ -60,28 +60,28 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.DataSources
             return entities;
         }
 
-        public async Task UpdateAsync(ProdutoDto dto)
+        public async Task UpdateAsync(ProdutoDto produto)
         {
-            var model = await _dbSet.FindAsync(dto.Id);
+            var model = await _dbSet.FindAsync(produto.Id);
 
             if (model == null)
             {
-                throw new KeyNotFoundException($"Produto com Id {dto.Id} não encontrado.");
+                throw new KeyNotFoundException($"Produto com Id {produto.Id} não encontrado.");
             }
 
-            model.Nome = dto.Nome;
-            model.Descricao = dto.Descricao;
-            model.Preco = dto.Preco;
-            model.CategoriaId = dto.CategoriaId;
-            model.Ativo = dto.Ativo;
+            model.Nome = produto.Nome;
+            model.Descricao = produto.Descricao;
+            model.Preco = produto.Preco;
+            model.CategoriaId = produto.CategoriaId;
+            model.Ativo = produto.Ativo;
 
             _dbSet.Update(model);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(ProdutoDto dto)
+        public async Task DeleteAsync(ProdutoDto produto)
         {
-            var model = await _dbSet.FindAsync(dto.Id);
+            var model = await _dbSet.FindAsync(produto.Id);
             if (model != null)
             {
                 model.Ativo = false;
@@ -101,18 +101,18 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.DataSources
             return result.Select(Parse);
         }
 
-        private static ProdutoModel Parse(ProdutoDto dto)
+        private static ProdutoModel Parse(ProdutoDto produto)
         {
             var model = new ProdutoModel
             {
-                Id = dto.Id,
-                SKU = dto.SKU,
-                Nome = dto.Nome,
-                Descricao = dto.Descricao,
-                Preco = dto.Preco,
-                CategoriaId = dto.CategoriaId,
-                Ativo = dto.Ativo,
-                Imagem = dto.Imagem
+                Id = produto.Id,
+                SKU = produto.SKU,
+                Nome = produto.Nome,
+                Descricao = produto.Descricao,
+                Preco = produto.Preco,
+                CategoriaId = produto.CategoriaId,
+                Ativo = produto.Ativo,
+                Imagem = produto.Imagem
             };
             return model;
         }

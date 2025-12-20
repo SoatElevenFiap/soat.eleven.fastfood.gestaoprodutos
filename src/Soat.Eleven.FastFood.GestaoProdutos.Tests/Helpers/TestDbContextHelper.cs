@@ -36,5 +36,6 @@ public class TestDbContextHelper : IDisposable
     {
         _context?.Dispose();
         _serviceProvider?.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

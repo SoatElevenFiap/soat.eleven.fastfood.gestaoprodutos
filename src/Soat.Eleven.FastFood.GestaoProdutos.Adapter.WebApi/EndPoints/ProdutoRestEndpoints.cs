@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Soat.Eleven.FastFood.GestaoProdutos.Application.Controllers;
 using Soat.Eleven.FastFood.GestaoProdutos.Core.DTOs.Produtos;
-using Soat.Eleven.FastFood.GestaoProdutos.Core.Enums;
 using Soat.Eleven.FastFood.GestaoProdutos.Core.Interfaces.DataSources;
 
 namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
@@ -13,12 +11,10 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
     {
         private readonly IProdutoDataSource _produtoDataSource;
         private readonly ICategoriaProdutoDataSource _categoriaSource;
-        private readonly ILogger<ProdutoRestEndpoints> _logger;
 
-        public ProdutoRestEndpoints(IProdutoDataSource produtoDataSource, ICategoriaProdutoDataSource categoriaGateway, ILogger<ProdutoRestEndpoints> logger)
+        public ProdutoRestEndpoints(IProdutoDataSource produtoDataSource, ICategoriaProdutoDataSource categoriaGateway)
         {
             _produtoDataSource = produtoDataSource;
-            _logger = logger;
             _categoriaSource = categoriaGateway;
         }
 

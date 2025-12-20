@@ -55,13 +55,11 @@ builder.Services.AddAuthentication(option =>
         };
     });
 
-builder.Services.AddAuthorization(option =>
-{
-    option.AddPolicy("Cliente", policy => policy.RequireRole(RolesAuthorization.Cliente));
-    option.AddPolicy("Administrador", policy => policy.RequireRole(RolesAuthorization.Administrador));
-    option.AddPolicy("ClienteTotem", policy => policy.RequireRole([RolesAuthorization.Cliente, RolesAuthorization.IdentificacaoTotem]));
-    option.AddPolicy("Commom", policy => policy.RequireRole([RolesAuthorization.Cliente, RolesAuthorization.Administrador]));
-});
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("Cliente", policy => policy.RequireRole(RolesAuthorization.Cliente))
+    .AddPolicy("Administrador", policy => policy.RequireRole(RolesAuthorization.Administrador))
+    .AddPolicy("ClienteTotem", policy => policy.RequireRole([RolesAuthorization.Cliente, RolesAuthorization.IdentificacaoTotem]))
+    .AddPolicy("Commom", policy => policy.RequireRole([RolesAuthorization.Cliente, RolesAuthorization.Administrador]));
 
 builder.Services.AddHealthChecks()
     .AddCheck("self", () => Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy());
@@ -90,7 +88,7 @@ app.MapHealthChecks("/health");
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();
 
 // Make the Program class public for testing
 public partial class Program { }

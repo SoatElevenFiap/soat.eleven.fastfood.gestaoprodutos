@@ -1,6 +1,6 @@
 ﻿namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.EntityModel.Base;
 
-public class EntityBase: TEntity, TAuditable
+public class EntityBase: ITEntity, ITAuditable
 {
     public Guid Id { get; set; }
     public DateTime CriadoEm { get; set; }

@@ -10,7 +10,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Application.Controllers;
 public class ProdutoController
 {
     private readonly IProdutoDataSource _produtoDataSource;
-    private ICategoriaProdutoDataSource _categoriaDataSource;
+    private readonly ICategoriaProdutoDataSource _categoriaDataSource;
 
     public ProdutoController(IProdutoDataSource produtoGateway, ICategoriaProdutoDataSource categoriaProdutoDataSource)
     {

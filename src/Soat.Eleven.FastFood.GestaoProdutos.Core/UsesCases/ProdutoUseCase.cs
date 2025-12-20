@@ -8,7 +8,6 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.UsesCases
     {
         private readonly IProdutoGateway _produtoGateway;
         private readonly ICategoriaProdutoGateway _categoriaProdutoGateway;
-        private const string DIRETORIO_IMAGENS = "produtos";
 
         private ProdutoUseCase(
             IProdutoGateway produtoGateway,

@@ -86,17 +86,25 @@ public class ProdutoTests
         produto.SKU.Should().Be(skuValido);
     }
 
-    [Fact]
-    public void Produto_DevePermitir_DefinirSKUVazio()
+    [Theory]
+    [InlineData("")]
+    public void Produto_DeveLancarExcecao_QuandoSKUForInvalido(string skuInvalido)
     {
-        // Arrange
-        var produto = new Produto();
+        // Arrange & Act & Assert
+        var action = () => new Produto { SKU = skuInvalido };
 
-        // Act
-        produto.SKU = "";
+        action.Should().Throw<ArgumentException>()
+              .WithMessage("*SKU*");
+    }
 
-        // Assert
-        produto.SKU.Should().Be("");
+    [Fact]
+    public void Produto_DeveLancarExcecao_QuandoSKUForNulo()
+    {
+        // Arrange & Act & Assert
+        var action = () => new Produto { SKU = null! };
+
+        action.Should().Throw<ArgumentException>()
+              .WithMessage("*SKU*");
     }
 
     [Fact]

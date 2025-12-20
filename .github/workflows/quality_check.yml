@@ -60,7 +60,21 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Necessário para análise de PRs
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          ./.sonar/scanner/dotnet-sonarscanner begin /k:"SoatElevenFiap_soat.eleven.fastfood.gestaoprodutos" /o:"soatelevenfiap" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/TestResults/*/coverage.opencover.xml"
+          ./.sonar/scanner/dotnet-sonarscanner begin \
+            /k:"SoatElevenFiap_soat.eleven.fastfood.gestaoprodutos" \
+            /o:"soatelevenfiap" \
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/*/coverage.opencover.xml" \
+            /d:sonar.exclusions="**/Migrations/**"
+          
           dotnet build src/Soat.Eleven.FastFood.GestaoProdutos.sln
-          dotnet test src/Soat.Eleven.FastFood.GestaoProdutos.Tests/Soat.Eleven.FastFood.GestaoProdutos.Tests.csproj --no-build --verbosity normal --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
-          ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          
+          dotnet test src/Soat.Eleven.FastFood.GestaoProdutos.Tests/Soat.Eleven.FastFood.GestaoProdutos.Tests.csproj \
+            --no-build \
+            --verbosity normal \
+            --collect:"XPlat Code Coverage" \
+            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          
+          ./.sonar/scanner/dotnet-sonarscanner end \
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}"

@@ -221,5 +221,6 @@ public class CategoriaProdutoDataSourceTests : IDisposable
     public void Dispose()
     {
         _dbHelper?.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

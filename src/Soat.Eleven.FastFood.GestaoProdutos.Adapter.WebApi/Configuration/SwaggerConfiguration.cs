@@ -62,7 +62,7 @@ Projeto acadêmico desenvolvido para a disciplina de Arquitetura de Software (FI
                                 Id = "Bearer"
                         }
                     },
-                    new string[] {}
+                    Array.Empty<string>()
                 }
             });
         });
@@ -70,10 +70,7 @@ Projeto acadêmico desenvolvido para a disciplina de Arquitetura de Software (FI
 
     public static void UseSwaggerConfiguration(this WebApplication applicationBuilder)
     {
-        if (applicationBuilder.Environment.IsDevelopment())
-        {
-            applicationBuilder.UseSwagger();
-            applicationBuilder.UseSwaggerUI();
-        }
+        applicationBuilder.UseSwagger();
+        applicationBuilder.UseSwaggerUI();
     }
 }

@@ -4,7 +4,7 @@ using Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.EntityModel.Base;
 
 namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.Data.ModelConfiguration.Base
 {
-    public class EntityBaseModelConfiguration<TBase> : IEntityTypeConfiguration<TBase> where TBase : class, TEntity, TAuditable
+    public class EntityBaseModelConfiguration<TBase> : IEntityTypeConfiguration<TBase> where TBase : class, ITEntity, ITAuditable
     {
         public virtual void Configure(EntityTypeBuilder<TBase> builder)
         {

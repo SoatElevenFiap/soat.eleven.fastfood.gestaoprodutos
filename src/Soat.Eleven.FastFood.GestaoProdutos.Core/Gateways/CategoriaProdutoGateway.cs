@@ -7,7 +7,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways
 {
     public class CategoriaProdutoGateway : ICategoriaProdutoGateway
     {
-        private ICategoriaProdutoDataSource _categoriaDataSource;
+        private readonly ICategoriaProdutoDataSource _categoriaDataSource;
 
         public CategoriaProdutoGateway(ICategoriaProdutoDataSource dataSource)
         {

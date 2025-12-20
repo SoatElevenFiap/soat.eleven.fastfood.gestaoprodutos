@@ -14,6 +14,10 @@ public class CategoriaProdutoEndpointsTests : IClassFixture<CustomWebApplication
 {
     private readonly CustomWebApplicationFactory _factory;
     private readonly HttpClient _client;
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
 
     public CategoriaProdutoEndpointsTests(CustomWebApplicationFactory factory)
     {
@@ -51,10 +55,7 @@ public class CategoriaProdutoEndpointsTests : IClassFixture<CustomWebApplication
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         
         var content = await response.Content.ReadAsStringAsync();
-        var categorias = JsonSerializer.Deserialize<List<CategoriaProdutoDto>>(content, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var categorias = JsonSerializer.Deserialize<List<CategoriaProdutoDto>>(content, JsonOptions);
 
         categorias.Should().NotBeNull();
         categorias.Should().HaveCountGreaterThanOrEqualTo(1);
@@ -80,10 +81,7 @@ public class CategoriaProdutoEndpointsTests : IClassFixture<CustomWebApplication
         response.StatusCode.Should().Be(HttpStatusCode.Created);
         
         var content = await response.Content.ReadAsStringAsync();
-        var categoriaCreated = JsonSerializer.Deserialize<CategoriaProdutoDto>(content, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var categoriaCreated = JsonSerializer.Deserialize<CategoriaProdutoDto>(content, JsonOptions);
 
         categoriaCreated.Should().NotBeNull();
         categoriaCreated!.Nome.Should().Be(novaCategoria.Nome);
@@ -106,10 +104,7 @@ public class CategoriaProdutoEndpointsTests : IClassFixture<CustomWebApplication
 
         var createResponse = await _client.PostAsJsonAsync("/api/Categoria", novaCategoria);
         var createContent = await createResponse.Content.ReadAsStringAsync();
-        var categoriaCreated = JsonSerializer.Deserialize<CategoriaProdutoDto>(createContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var categoriaCreated = JsonSerializer.Deserialize<CategoriaProdutoDto>(createContent, JsonOptions);
 
         // Act
         var response = await _client.GetAsync($"/api/Categoria/{categoriaCreated!.Id}");
@@ -118,10 +113,7 @@ public class CategoriaProdutoEndpointsTests : IClassFixture<CustomWebApplication
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         
         var content = await response.Content.ReadAsStringAsync();
-        var categoria = JsonSerializer.Deserialize<CategoriaProdutoDto>(content, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var categoria = JsonSerializer.Deserialize<CategoriaProdutoDto>(content, JsonOptions);
 
         categoria.Should().NotBeNull();
         categoria!.Id.Should().Be(categoriaCreated.Id);
@@ -143,10 +135,7 @@ public class CategoriaProdutoEndpointsTests : IClassFixture<CustomWebApplication
 
         var createResponse = await _client.PostAsJsonAsync("/api/Categoria", novaCategoria);
         var createContent = await createResponse.Content.ReadAsStringAsync();
-        var categoriaCreated = JsonSerializer.Deserialize<CategoriaProdutoDto>(createContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var categoriaCreated = JsonSerializer.Deserialize<CategoriaProdutoDto>(createContent, JsonOptions);
 
         var atualizarCategoria = new AtualizarCategoriaDto
         {
@@ -161,10 +150,7 @@ public class CategoriaProdutoEndpointsTests : IClassFixture<CustomWebApplication
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         
         var content = await response.Content.ReadAsStringAsync();
-        var categoriaAtualizada = JsonSerializer.Deserialize<CategoriaProdutoDto>(content, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var categoriaAtualizada = JsonSerializer.Deserialize<CategoriaProdutoDto>(content, JsonOptions);
 
         categoriaAtualizada.Should().NotBeNull();
         categoriaAtualizada!.Id.Should().Be(categoriaCreated.Id);
@@ -186,10 +172,7 @@ public class CategoriaProdutoEndpointsTests : IClassFixture<CustomWebApplication
 
         var createResponse = await _client.PostAsJsonAsync("/api/Categoria", novaCategoria);
         var createContent = await createResponse.Content.ReadAsStringAsync();
-        var categoriaCreated = JsonSerializer.Deserialize<CategoriaProdutoDto>(createContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var categoriaCreated = JsonSerializer.Deserialize<CategoriaProdutoDto>(createContent, JsonOptions);
 
         // Act
         var response = await _client.DeleteAsync($"/api/Categoria/{categoriaCreated!.Id}");
@@ -200,10 +183,7 @@ public class CategoriaProdutoEndpointsTests : IClassFixture<CustomWebApplication
         // Verificar se foi desativada
         var getResponse = await _client.GetAsync($"/api/Categoria/{categoriaCreated.Id}");
         var getContent = await getResponse.Content.ReadAsStringAsync();
-        var categoriaDesativada = JsonSerializer.Deserialize<CategoriaProdutoDto>(getContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var categoriaDesativada = JsonSerializer.Deserialize<CategoriaProdutoDto>(getContent, JsonOptions);
 
         categoriaDesativada!.Ativo.Should().BeFalse();
     }
@@ -222,10 +202,7 @@ public class CategoriaProdutoEndpointsTests : IClassFixture<CustomWebApplication
 
         var createResponse = await _client.PostAsJsonAsync("/api/Categoria", novaCategoria);
         var createContent = await createResponse.Content.ReadAsStringAsync();
-        var categoriaCreated = JsonSerializer.Deserialize<CategoriaProdutoDto>(createContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var categoriaCreated = JsonSerializer.Deserialize<CategoriaProdutoDto>(createContent, JsonOptions);
 
         // Primeiro desativar
         await _client.DeleteAsync($"/api/Categoria/{categoriaCreated!.Id}");
@@ -239,10 +216,7 @@ public class CategoriaProdutoEndpointsTests : IClassFixture<CustomWebApplication
         // Verificar se foi reativada
         var getResponse = await _client.GetAsync($"/api/Categoria/{categoriaCreated.Id}");
         var getContent = await getResponse.Content.ReadAsStringAsync();
-        var categoriaReativada = JsonSerializer.Deserialize<CategoriaProdutoDto>(getContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var categoriaReativada = JsonSerializer.Deserialize<CategoriaProdutoDto>(getContent, JsonOptions);
 
         categoriaReativada!.Ativo.Should().BeTrue();
     }

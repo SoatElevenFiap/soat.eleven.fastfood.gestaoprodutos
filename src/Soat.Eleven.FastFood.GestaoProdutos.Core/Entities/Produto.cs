@@ -23,6 +23,7 @@ public class Produto
         get { return sku; }
         set
         {
+            Condition.Require(value, "SKU").IsNullOrEmpty();
             sku = value;
         }
     }
