@@ -7,8 +7,6 @@ using Soat.Eleven.FastFood.GestaoProdutos.Core.Enums;
 using System.Text;
 
 
-const string SECRET_KEY_PASS = "5180e58ff93cef142763fdf3cc11f36c16335292a69bf201a4f72a834e625038032d04823966b02ff320564a0bc677c4bdcf3d67be724879b33711b04ba3e337";
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -31,8 +29,10 @@ if (builder.Environment.IsEnvironment("Testing"))
 else
 {
     // Use PostgreSQL for production
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+        ?? Environment.GetEnvironmentVariable("CONNECTION_STRING");
     builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnectionString")));
+        options.UseNpgsql(connectionString));
 }
 
 builder.Services.AddCors();
@@ -49,7 +49,7 @@ builder.Services.AddAuthentication(option =>
         option.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["SECRET_KEY_PASSWORK"] ?? SECRET_KEY_PASS)),
+            //IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["SECRET_KEY_PASSWORK"] ?? SECRET_KEY_PASS)),
             ValidateIssuer = false,
             ValidateAudience = false
         };
@@ -80,9 +80,7 @@ app.UseSwaggerConfiguration();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseCors(x => x.AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader());
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
