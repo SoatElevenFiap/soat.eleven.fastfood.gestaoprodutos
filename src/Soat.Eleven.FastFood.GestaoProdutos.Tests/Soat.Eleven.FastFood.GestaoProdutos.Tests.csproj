@@ -7,10 +7,25 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+
+    <!-- Configurações de Cobertura de Código -->
+    <CollectCoverage>true</CollectCoverage>
+    <CoverletOutputFormat>cobertura,opencover</CoverletOutputFormat>
+    <CoverletOutput>./TestResults/coverage</CoverletOutput>
+    <Threshold>80</Threshold>
+    <ThresholdType>line</ThresholdType>
+    <ThresholdStat>minimum</ThresholdStat>
+    <Include>[Soat.Eleven.FastFood.GestaoProdutos.Application]*,[Soat.Eleven.FastFood.GestaoProdutos.Core]*,[Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra]*</Include>
+    <Exclude>[*.Tests]*,[*]*Program,[*]*Startup,[*]*Configuration*,[*]*RegisterServicesConfiguration,[*]*ErrorExceptionHandlingMiddleware,[*]*SwaggerConfiguration</Exclude>
+    <ExcludeByFile>**/Migrations/**,**/Configuration/**,**/EntityModel/**,**/ModelConfiguration/**</ExcludeByFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.msbuild" Version="6.0.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

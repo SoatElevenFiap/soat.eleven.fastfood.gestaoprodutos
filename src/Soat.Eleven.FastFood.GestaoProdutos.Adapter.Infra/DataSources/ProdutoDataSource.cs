@@ -66,7 +66,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.DataSources
 
             if (model == null)
             {
-                throw new KeyNotFoundException($"Produto com Id {dto.Id} n„o encontrado.");
+                throw new KeyNotFoundException($"Produto com Id {dto.Id} n√£o encontrado.");
             }
 
             model.Nome = dto.Nome;
@@ -81,9 +81,13 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.DataSources
 
         public async Task DeleteAsync(ProdutoDto dto)
         {
-            var model = Parse(dto);
-            _dbSet.Remove(model);
-            await _context.SaveChangesAsync();
+            var model = await _dbSet.FindAsync(dto.Id);
+            if (model != null)
+            {
+                model.Ativo = false;
+                _dbSet.Update(model);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<IEnumerable<ProdutoDto>> GetByCategoriaAsync(Guid categoriaId)

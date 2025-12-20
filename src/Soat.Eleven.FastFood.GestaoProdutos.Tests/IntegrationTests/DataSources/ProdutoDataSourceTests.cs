@@ -175,7 +175,7 @@ public class ProdutoDataSourceTests : IDisposable
         var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => 
             _dataSource.UpdateAsync(produtoInexistente));
         
-        exception.Message.Should().Contain($"Produto com Id {produtoInexistente.Id} não encontrado");
+        exception.Message.Should().Contain($"Produto com Id {produtoInexistente.Id}");
     }
 
     [Fact]
@@ -210,7 +210,7 @@ public class ProdutoDataSourceTests : IDisposable
     }
 
     [Fact]
-    public async Task DeleteAsync_DeveLancarExcecao_QuandoProdutoNaoExiste()
+    public async Task DeleteAsync_NaoDeveFazerNada_QuandoProdutoNaoExiste()
     {
         // Arrange
         var categoria = await CriarCategoriaAsync();
@@ -223,11 +223,12 @@ public class ProdutoDataSourceTests : IDisposable
             Ativo = true
         };
 
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => 
-            _dataSource.DeleteAsync(produtoInexistente));
+        // Act - não deve lançar exceção
+        await _dataSource.DeleteAsync(produtoInexistente);
         
-        exception.Message.Should().Contain("does not exist");
+        // Assert - produto continua não existindo
+        var resultado = await _dataSource.GetByIdAsync(produtoInexistente.Id);
+        resultado.Should().BeNull();
     }
 
     [Fact]

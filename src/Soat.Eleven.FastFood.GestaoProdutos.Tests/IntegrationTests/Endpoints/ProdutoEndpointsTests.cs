@@ -10,6 +10,7 @@ using Soat.Eleven.FastFood.GestaoProdutos.Tests.Helpers;
 
 namespace Soat.Eleven.FastFood.GestaoProdutos.Tests.IntegrationTests.Endpoints;
 
+[Collection("Integration Tests")]
 public class ProdutoEndpointsTests : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly CustomWebApplicationFactory _factory;
