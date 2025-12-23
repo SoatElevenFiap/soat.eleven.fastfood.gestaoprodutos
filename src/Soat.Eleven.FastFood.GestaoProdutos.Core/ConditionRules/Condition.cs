@@ -1,6 +1,6 @@
 ﻿namespace Soat.Eleven.FastFood.GestaoProdutos.Core.ConditionRules;
 
-public class Condition
+public static class Condition
 {
     public static ConditionException<T> Require<T>(T target)
     {

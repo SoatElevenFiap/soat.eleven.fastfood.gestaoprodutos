@@ -32,6 +32,9 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
             var controller = new CategoriaProdutoController(_categoriaDataSource);
             var categoria = await controller.GetCategoriaPorId(id);
 
+            if (categoria == null)
+                return NotFound();
+
             return Ok(categoria);
         }
 
@@ -54,9 +57,13 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
                 var categoriaAtualizada = await controller.AtualizarCategoria(id, categoria);
                 return Ok(categoriaAtualizada);
             }
-            catch (ArgumentException ex)
+            catch (KeyNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 
@@ -70,7 +77,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
                 await controller.DesativarCategoria(id);
                 return NoContent();
             }
-            catch (ArgumentException ex)
+            catch (KeyNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }
@@ -86,7 +93,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
                 await controller.ReativarCategoria(id);
                 return NoContent();
             }
-            catch (ArgumentException ex)
+            catch (KeyNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }

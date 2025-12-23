@@ -166,6 +166,10 @@ coverage*.info
 *.coverage
 *.coveragexml
 
+# Coverage reports and test results
+CoverageReport/
+TestResults/
+
 # NCrunch
 _NCrunch_*
 .NCrunch_*

@@ -1,0 +1,80 @@
+name: Quality Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    name: Build and analyze
+    runs-on: ubuntu-latest
+    steps:
+      # Configura Java 17 (requerido pelo SonarScanner)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'zulu'
+
+      # Configura .NET 8.0 para build e testes
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # Faz checkout do código com histórico completo para análise incremental
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Cache dos pacotes do SonarQube para acelerar builds subsequentes
+      - name: Cache SonarQube Cloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      # Cache do scanner do SonarQube
+      - name: Cache SonarQube Cloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v4
+        with:
+          path: ./.sonar/scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+
+      # Instala o SonarScanner se não estiver em cache
+      - name: Install SonarQube Cloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ./.sonar/scanner
+          dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
+
+      # Executa build, testes com cobertura e envia para SonarCloud
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Necessário para análise de PRs
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          ./.sonar/scanner/dotnet-sonarscanner begin \
+            /k:"SoatElevenFiap_soat.eleven.fastfood.gestaoprodutos" \
+            /o:"soatelevenfiap" \
+            /d:sonar.token="${SONAR_TOKEN}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/*/coverage.opencover.xml" \
+            /d:sonar.exclusions="**/Migrations/**"
+          
+          dotnet build src/Soat.Eleven.FastFood.GestaoProdutos.sln
+          
+          dotnet test src/Soat.Eleven.FastFood.GestaoProdutos.Tests/Soat.Eleven.FastFood.GestaoProdutos.Tests.csproj \
+            --no-build \
+            --verbosity normal \
+            --collect:"XPlat Code Coverage" \
+            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          
+          ./.sonar/scanner/dotnet-sonarscanner end \
+            /d:sonar.token="${SONAR_TOKEN}"

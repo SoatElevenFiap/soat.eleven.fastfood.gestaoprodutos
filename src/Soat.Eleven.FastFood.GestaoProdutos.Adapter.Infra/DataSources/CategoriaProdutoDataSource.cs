@@ -17,13 +17,13 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.DataSources
             _dbSet = _context.Set<CategoriaProdutoModel>();
         }
 
-        public async Task<CategoriaProdutoDto> AddAsync(CategoriaProdutoDto dto)
+        public async Task<CategoriaProdutoDto> AddAsync(CategoriaProdutoDto categoria)
         {
-            var model = Parse(dto);
+            var model = Parse(categoria);
             await _dbSet.AddAsync(model);
             await _context.SaveChangesAsync();
 
-            return dto;
+            return categoria;
         }
 
         public async Task<CategoriaProdutoDto?> GetByIdAsync(Guid id)
@@ -55,18 +55,18 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.DataSources
             return entities;
         }
 
-        public async Task<CategoriaProdutoDto> UpdateAsync(CategoriaProdutoDto dto)
+        public async Task<CategoriaProdutoDto> UpdateAsync(CategoriaProdutoDto categoria)
         {
-            var model = await _dbSet.FindAsync(dto.Id);
+            var model = await _dbSet.FindAsync(categoria.Id);
 
             if (model == null)
             {
-                throw new KeyNotFoundException($"Categoria com Id {dto.Id} n„o encontrada.");
+                throw new KeyNotFoundException($"Categoria com Id {categoria.Id} n√£o encontrada.");
             }
 
-            model.Nome = dto.Nome;
-            model.Descricao = dto.Descricao;
-            model.Ativo = dto.Ativo;
+            model.Nome = categoria.Nome;
+            model.Descricao = categoria.Descricao;
+            model.Ativo = categoria.Ativo;
 
             _dbSet.Update(model);
             await _context.SaveChangesAsync();
@@ -74,34 +74,38 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.DataSources
             return Parse(model);
         }
 
-        public async Task DeleteAsync(CategoriaProdutoDto dto)
+        public async Task DeleteAsync(CategoriaProdutoDto categoria)
         {
-            var model = Parse(dto);
-            _dbSet.Remove(model);
-            await _context.SaveChangesAsync();
+            var model = await _dbSet.FindAsync(categoria.Id);
+            
+            if (model != null)
+            {
+                _dbSet.Remove(model);
+                await _context.SaveChangesAsync();
+            }
         }
 
-        private static CategoriaProdutoModel Parse(CategoriaProdutoDto dto)
+        private static CategoriaProdutoModel Parse(CategoriaProdutoDto categoria)
         {
             var model = new CategoriaProdutoModel
             {
-                Id = dto.Id,
-                Nome = dto.Nome,
-                Descricao = dto.Descricao,
-                Ativo = dto.Ativo
+                Id = categoria.Id,
+                Nome = categoria.Nome,
+                Descricao = categoria.Descricao,
+                Ativo = categoria.Ativo
             };
 
             return model;
         }
 
-        private static CategoriaProdutoDto Parse(CategoriaProdutoModel model)
+        private static CategoriaProdutoDto Parse(CategoriaProdutoModel categoria)
         {
             return new CategoriaProdutoDto
             {
-                Id = model.Id,
-                Nome = model.Nome,
-                Descricao = model.Descricao,
-                Ativo = model.Ativo
+                Id = categoria.Id,
+                Nome = categoria.Nome,
+                Descricao = categoria.Descricao,
+                Ativo = categoria.Ativo
             };
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.EntityModel.Base;
 
-public interface TEntity
+public interface ITEntity
 {
     public Guid Id { get; set; }
 }

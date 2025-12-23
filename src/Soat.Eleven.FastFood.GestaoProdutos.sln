@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soat.Eleven.FastFood.Gestao
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soat.Eleven.FastFood.GestaoProdutos.Application", "Soat.Eleven.FastFood.GestaoProdutos.Application\Soat.Eleven.FastFood.GestaoProdutos.Application.csproj", "{86CBB132-D678-4309-89D1-8A3675EB4C58}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soat.Eleven.FastFood.GestaoProdutos.Tests", "Soat.Eleven.FastFood.GestaoProdutos.Tests\Soat.Eleven.FastFood.GestaoProdutos.Tests.csproj", "{A1B2C3D4-E5F6-7890-ABCD-123456789012}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{86CBB132-D678-4309-89D1-8A3675EB4C58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86CBB132-D678-4309-89D1-8A3675EB4C58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86CBB132-D678-4309-89D1-8A3675EB4C58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-123456789012}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-123456789012}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-123456789012}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-123456789012}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

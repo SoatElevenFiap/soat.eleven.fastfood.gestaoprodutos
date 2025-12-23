@@ -16,7 +16,6 @@ public class ProdutoPresenter
             Preco = output.Preco,
             CategoriaId = output.CategoriaId,
             Ativo = output.Ativo,
-            CriadoEm = output.CriadoEm,
             Imagem = output.Imagem
         };
     }

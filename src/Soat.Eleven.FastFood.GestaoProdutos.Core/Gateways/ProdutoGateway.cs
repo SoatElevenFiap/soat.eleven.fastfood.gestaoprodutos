@@ -1,12 +1,13 @@
 ﻿using Soat.Eleven.FastFood.GestaoProdutos.Core.DTOs.Produtos;
 using Soat.Eleven.FastFood.GestaoProdutos.Core.Entities;
 using Soat.Eleven.FastFood.GestaoProdutos.Core.Interfaces.DataSources;
+using Soat.Eleven.FastFood.GestaoProdutos.Core.Interfaces.Gateways;
 
 namespace Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways
 {
-    public class ProdutoGateway
+    public class ProdutoGateway : IProdutoGateway
     {
-        private IProdutoDataSource _produtoDataSource;        
+        private readonly IProdutoDataSource _produtoDataSource;        
 
         public ProdutoGateway(IProdutoDataSource dataSource)
         {
@@ -24,7 +25,6 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways
                 Preco = produto.Preco,
                 CategoriaId = produto.CategoriaId,
                 Ativo = produto.Ativo,
-                CriadoEm = produto.CriadoEm,
                 Imagem = produto.Imagem
             };
 
@@ -42,7 +42,6 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways
                 Preco = produto.Preco,
                 CategoriaId = produto.CategoriaId,
                 Ativo = produto.Ativo,
-                CriadoEm = produto.CriadoEm,
                 Imagem = produto.Imagem
             };
 
@@ -65,7 +64,6 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways
                 Preco = produtoDto.Preco,
                 CategoriaId = produtoDto.CategoriaId,
                 Ativo = produtoDto.Ativo,
-                CriadoEm = produtoDto.CriadoEm,
                 Imagem = produtoDto.Imagem
             };
 
@@ -85,7 +83,6 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways
                 Preco = p.Preco,
                 CategoriaId = p.CategoriaId,
                 Ativo = p.Ativo,
-                CriadoEm = p.CriadoEm,
                 Imagem = p.Imagem
             });
 
@@ -112,7 +109,6 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Core.Gateways
                 Preco = p.Preco,
                 CategoriaId = p.CategoriaId,
                 Ativo = p.Ativo,
-                CriadoEm = p.CriadoEm,
                 Imagem = p.Imagem
             });
 

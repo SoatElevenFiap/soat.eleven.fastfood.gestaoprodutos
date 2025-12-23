@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+
+    <!-- Configurações de Cobertura de Código -->
+    <CollectCoverage>true</CollectCoverage>
+    <CoverletOutputFormat>cobertura,opencover</CoverletOutputFormat>
+    <CoverletOutput>./TestResults/coverage</CoverletOutput>
+    <Threshold>80</Threshold>
+    <ThresholdType>line</ThresholdType>
+    <ThresholdStat>minimum</ThresholdStat>
+    <Include>[Soat.Eleven.FastFood.GestaoProdutos.Application]*,[Soat.Eleven.FastFood.GestaoProdutos.Core]*,[Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra]*</Include>
+    <Exclude>[*.Tests]*,[*]*Program,[*]*Startup,[*]*Configuration*,[*]*RegisterServicesConfiguration,[*]*ErrorExceptionHandlingMiddleware,[*]*SwaggerConfiguration</Exclude>
+    <ExcludeByFile>**/Migrations/**,**/Configuration/**,**/EntityModel/**,**/ModelConfiguration/**</ExcludeByFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.msbuild" Version="6.0.4">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="FluentAssertions" Version="6.12.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
+    <PackageReference Include="NSubstitute" Version="5.1.0" />
+    <PackageReference Include="xunit" Version="2.6.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Soat.Eleven.FastFood.GestaoProdutos.Core\Soat.Eleven.FastFood.GestaoProdutos.Core.csproj" />
+    <ProjectReference Include="..\Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra\Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.csproj" />
+    <ProjectReference Include="..\Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi\Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.csproj" />
+    <ProjectReference Include="..\Soat.Eleven.FastFood.GestaoProdutos.Application\Soat.Eleven.FastFood.GestaoProdutos.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="FluentAssertions" />
+    <Using Include="NSubstitute" />
+  </ItemGroup>
+
+</Project>

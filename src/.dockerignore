@@ -21,6 +21,11 @@
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
+**/.env.example
+**/appsettings.Development.json
+**/TestResults
+**/*.Tests/**
+**/coverage*
 LICENSE
 README.md
 !**/.gitignore

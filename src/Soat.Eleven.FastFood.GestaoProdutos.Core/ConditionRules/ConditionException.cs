@@ -5,7 +5,7 @@ public abstract class ConditionException<T>
     internal T Target { get; set; }
     internal string ArgumentName { get; set; }
 
-    internal ConditionException(T target, string argumentName)
+    private protected ConditionException(T target, string argumentName)
     {
         Target = target;
         ArgumentName = argumentName;
