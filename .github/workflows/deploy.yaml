@@ -1,0 +1,132 @@
+name: CD - Deploy FastFood to AKS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  REGISTRY: acrfastfoodpostech.azurecr.io
+  APP_IMAGE_NAME: fastfood/app
+  MIGRATOR_IMAGE_NAME: fastfood/migrator
+  CHART_PATH: ./fastfood-chart
+  RELEASE_NAME: fastfood-release
+  AKS_RESOURCE_GROUP: rg-fastfood-postech
+  AKS_CLUSTER_NAME: aks-fastfood-postech
+  NAMESPACE: fastfood
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      # 1. Checkout do código
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Setup .NET (necessário para build das imagens)
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # ============================================
+      # DEPLOY TO AZURE
+      # ============================================
+
+      # Variáveis necessárias:
+      # AZURE_CLIENT_ID - Client ID do Azure
+      # AZURE_TENANT_ID - Tenant ID do Azure
+      # AZURE_SUBSCRIPTION_ID - Subscription ID do Azure
+      # POSTGRES_HOST - Host do PostgreSQL
+      # POSTGRES_USER - Usuário do PostgreSQL
+      # POSTGRES_PASSWORD - Senha do PostgreSQL
+
+      # 3. Login no Azure usando OIDC
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # 4. Login no ACR
+      - name: Azure Container Registry Login
+        run: az acr login --name acrfastfoodpostech
+
+      # 5. Build e push das imagens Docker (App + Migrator)
+      - name: Build and push Docker images
+        run: |
+          docker build --target final -t $REGISTRY/$APP_IMAGE_NAME:latest .
+          docker push $REGISTRY/$APP_IMAGE_NAME:latest
+          
+          docker build --target migrator -t $REGISTRY/$MIGRATOR_IMAGE_NAME:latest .
+          docker push $REGISTRY/$MIGRATOR_IMAGE_NAME:latest
+
+      # 6. Conectar no AKS
+      - name: Get AKS credentials
+        run: |
+          rm -rf ~/.kube/config || true
+          az aks get-credentials \
+            --resource-group $AKS_RESOURCE_GROUP \
+            --name $AKS_CLUSTER_NAME \
+            --overwrite-existing \
+            --admin
+          kubectl cluster-info
+          kubectl get nodes
+
+      # 7. Criar namespace se não existir
+      - name: Create namespace
+        run: kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
+
+      # 8. Setup Helm
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.15.1
+
+      # 9. Executar Migration Job
+      - name: Run Database Migration
+        run: |
+          kubectl delete job migrator -n $NAMESPACE --ignore-not-found=true
+          sleep 5
+          
+          helm template migrator-job $CHART_PATH \
+            --set image.migratorRepository=$REGISTRY/$MIGRATOR_IMAGE_NAME:latest \
+            --set image.repository=$REGISTRY/$APP_IMAGE_NAME:latest \
+            --set postgres.host="${{ secrets.POSTGRES_HOST }}" \
+            --set credentials.user="${{ secrets.POSTGRES_USER }}" \
+            --set credentials.password="${{ secrets.POSTGRES_PASSWORD }}" \
+            --namespace $NAMESPACE \
+            --show-only templates/migrator-job.yaml \
+            --show-only templates/config-map.yaml \
+            --show-only templates/secret.yaml | kubectl apply -f -
+          
+          kubectl wait --for=condition=complete job/migrator -n $NAMESPACE --timeout=900s
+          kubectl logs job/migrator -n $NAMESPACE
+
+      # 10. Deploy da aplicação
+      - name: Deploy Application
+        run: |
+          # Criar secret para ACR
+          kubectl delete secret acr-secret -n $NAMESPACE --ignore-not-found=true
+          kubectl create secret docker-registry acr-secret \
+            --docker-server=$REGISTRY \
+            --docker-username=$(az acr credential show --name acrfastfoodpostech --query "username" -o tsv) \
+            --docker-password=$(az acr credential show --name acrfastfoodpostech --query "passwords[0].value" -o tsv) \
+            --namespace $NAMESPACE
+          
+          # Deploy usando Helm (upgrade ou install)
+          helm upgrade --install $RELEASE_NAME $CHART_PATH \
+            --set image.repository=$REGISTRY/$APP_IMAGE_NAME:latest \
+            --set image.migratorRepository=$REGISTRY/$MIGRATOR_IMAGE_NAME:latest \
+            --set postgres.host="${{ secrets.POSTGRES_HOST }}" \
+            --set credentials.user="${{ secrets.POSTGRES_USER }}" \
+            --set credentials.password="${{ secrets.POSTGRES_PASSWORD }}" \
+            --namespace $NAMESPACE \
+            --wait \
+            --timeout=10m
