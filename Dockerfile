@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 
 COPY src/*.sln src/
-COPY Soat.Eleven.GestaoProdutos.Tests/*.csproj Soat.Eleven.GestaoProdutos.Tests/
+COPY src/Soat.Eleven.GestaoProdutos.Tests/*.csproj src/Soat.Eleven.GestaoProdutos.Tests/
 COPY src/Soat.Eleven.GestaoProdutos.Api/*.csproj src/Soat.Eleven.GestaoProdutos.Api/
 COPY src/Soat.Eleven.GestaoProdutos.Application/*.csproj src/Soat.Eleven.GestaoProdutos.Application/
 COPY src/Soat.Eleven.GestaoProdutos.Core/*.csproj src/Soat.Eleven.GestaoProdutos.Core/
