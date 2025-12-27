@@ -11,7 +11,7 @@ env:
   APP_IMAGE_NAME: fastfood/gestao-produtos
   MIGRATOR_IMAGE_NAME: fastfood/migrator-gestao-produtos
   CHART_PATH: ./helm/fastfood-chart
-  RELEASE_NAME: fastfood-release
+  RELEASE_NAME: gestao-produtos-release
   AKS_RESOURCE_GROUP: rg-fastfood-postech
   AKS_CLUSTER_NAME: aks-fastfood-postech
   NAMESPACE: fastfood
