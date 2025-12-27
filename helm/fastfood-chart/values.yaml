@@ -1,0 +1,45 @@
+# Variáveis da Imagem
+image:
+  repository: acrfastfoodpostech.azurecr.io/fastfood/app:v1 
+  migratorRepository: acrfastfoodpostech.azurecr.io/fastfood/migrator:v2
+  pullPolicy: IfNotPresent
+
+# Namespace customizável
+namespace: fastfood
+
+# Configurações do Service
+service:
+  type: ClusterIP  # ClusterIP para usar com AGIC
+  port: 80
+
+# Configurações do HPA
+hpa:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 5
+  cpuEnabled: true
+  targetCPUUtilization: 70
+  memoryEnabled: true
+  targetMemoryUtilization: 75
+
+# Variáveis do Azure PostgreSQL
+postgres:
+  host: "" # Será definido via --set no Helm
+  db: "produto" # Nome do DB
+  port: "5432"
+
+# Configurações do Serviço de Pagamento
+pagamento:
+  clientId: "" # Será definido via --set no Helm
+  baseUrl: "http://pagamento-service:80" # URL do serviço de pagamento
+
+# Configurações do Ingress para AGIC
+ingress:
+  enabled: true
+  host: "fastfood"
+  ingressClassName: "azure-application-gateway"
+
+# Credenciais do banco (serão passadas via pipeline)
+credentials: 
+  user: "" # Será definido via --set no Helm
+  password: "" # Será definido via --set no Helm 

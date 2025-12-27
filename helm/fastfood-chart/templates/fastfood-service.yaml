@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: app
+  name: app-service
+  namespace: fastfood
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  selector:
+    app: app
+  type: {{ .Values.service.type | default "LoadBalancer" }}
