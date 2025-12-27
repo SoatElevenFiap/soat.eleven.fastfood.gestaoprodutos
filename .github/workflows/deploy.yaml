@@ -60,14 +60,27 @@ jobs:
       # 5. Build e push das imagens Docker (App + Migrator)
       - name: Build and push Docker images
         run: |
-          docker build --target final -t $REGISTRY/$APP_IMAGE_NAME:latest -f src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi/Dockerfile ./src
-          docker push $REGISTRY/$APP_IMAGE_NAME:$IMAGE_TAG
-          docker push $REGISTRY/$APP_IMAGE_NAME:latest
+          # 1. Definir a TAG para ser usada em todo o script
+          TAG=${{ github.sha }}
           
-          docker build --target migrator -t $REGISTRY/$MIGRATOR_IMAGE_NAME:latest -f src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi/Dockerfile ./src
-          docker push $REGISTRY/$MIGRATOR_IMAGE_NAME:$IMAGE_TAG
-          docker push $REGISTRY/$MIGRATOR_IMAGE_NAME:latest
+          echo "--- Building Application ---"
+          docker build --target final \
+            -t $REGISTRY/$APP_IMAGE_NAME:$TAG \
+            -t $REGISTRY/$APP_IMAGE_NAME:latest \
+            -f src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi/Dockerfile ./src
+          
+          echo "--- Building Migrator ---"
+          docker build --target migrator \
+            -t $REGISTRY/$MIGRATOR_IMAGE_NAME:$TAG \
+            -t $REGISTRY/$MIGRATOR_IMAGE_NAME:latest \
+            -f src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi/Dockerfile ./src
 
+          echo "--- Pushing Images to ACR ---"
+          docker push $REGISTRY/$APP_IMAGE_NAME:$TAG
+          docker push $REGISTRY/$APP_IMAGE_NAME:latest
+          docker push $REGISTRY/$MIGRATOR_IMAGE_NAME:$TAG
+          docker push $REGISTRY/$MIGRATOR_IMAGE_NAME:latest
+          
       # 6. Conectar no AKS
       - name: Get AKS credentials
         run: |
