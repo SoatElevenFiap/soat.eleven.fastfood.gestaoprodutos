@@ -1,7 +1,9 @@
 # Variáveis da Imagem
 image:
-  repository: acrfastfoodpostech.azurecr.io/fastfood/app:v1 
-  migratorRepository: acrfastfoodpostech.azurecr.io/fastfood/migrator:v2
+  repository: acrfastfoodpostech.azurecr.io/fastfood/gestao-produtos
+  tag: latest
+  migratorRepository: acrfastfoodpostech.azurecr.io/fastfood/migrator-gestao-produtos
+  migratorTag: latest
   pullPolicy: IfNotPresent
 
 # Namespace customizável

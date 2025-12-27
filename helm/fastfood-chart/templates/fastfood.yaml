@@ -20,7 +20,7 @@ spec:
         - name: acr-secret
       containers:
         - name: app
-          image: "{{ .Values.image.repository }}" 
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           resources:
             requests:
@@ -46,11 +46,11 @@ spec:
                 configMapKeyRef:
                   name: fastfood-config
                   key: POSTGRES_HOST
-            - name: POSTGRES_DB
+            - name: POSTGRES_DB_GESTAO
               valueFrom:
                 configMapKeyRef:
                   name: fastfood-config
-                  key: POSTGRES_DB
+                  key: POSTGRES_DB_GESTAO
             - name: POSTGRES_PORT
               valueFrom:
                 configMapKeyRef:
@@ -66,18 +66,18 @@ spec:
                 secretKeyRef:
                   name: db-credentials
                   key: POSTGRES_PASSWORD
-            - name: PagamentoService__ClientId
-              valueFrom:
-                configMapKeyRef:
-                  name: fastfood-config
-                  key: PAGAMENTO_CLIENT_ID
-            - name: PagamentoService__BaseUrl
-              valueFrom:
-                configMapKeyRef:
-                  name: fastfood-config
-                  key: PAGAMENTO_BASE_URL
+            # - name: PagamentoService__ClientId
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: fastfood-config
+            #       key: PAGAMENTO_CLIENT_ID
+            # - name: PagamentoService__BaseUrl
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: fastfood-config
+            #       key: PAGAMENTO_BASE_URL
             - name: ConnectionStrings__PostgresConnectionString
-              value: "Host=$(POSTGRES_HOST);Port=$(POSTGRES_PORT);Database=$(POSTGRES_DB);Username=$(POSTGRES_USER);Password=$(POSTGRES_PASSWORD);SslMode=Require;TrustServerCertificate=true"
+              value: "Host=$(POSTGRES_HOST);Port=$(POSTGRES_PORT);Database=$(POSTGRES_DB_GESTAO);Username=$(POSTGRES_USER);Password=$(POSTGRES_PASSWORD);SslMode=Require;TrustServerCertificate=true"
           ports:
             - containerPort: 80
               protocol: TCP

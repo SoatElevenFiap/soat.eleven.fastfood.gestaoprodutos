@@ -1,3 +1,4 @@
+{{- if not (lookup "batch/v1" "Job" .Release.Namespace "migrator") -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -26,24 +27,24 @@ spec:
               echo "=== DEBUG: Variáveis de conexão ==="
               echo "POSTGRES_HOST: $POSTGRES_HOST"
               echo "POSTGRES_PORT: $POSTGRES_PORT"
-              echo "POSTGRES_DB: $POSTGRES_DB"
+              echo "POSTGRES_DB_GESTAO: $POSTGRES_DB_GESTAO"
               echo "POSTGRES_USER: $POSTGRES_USER"
               echo "POSTGRES_PASSWORD: [MASKED]"
               echo "=== Connection String (mascarada) ==="
-              echo "Host=$POSTGRES_HOST;Port=$POSTGRES_PORT;Database=$POSTGRES_DB;Username=$POSTGRES_USER;Password=[MASKED];SslMode=Require;TrustServerCertificate=true"
+              echo "Host=$POSTGRES_HOST;Port=$POSTGRES_PORT;Database=$POSTGRES_DB_GESTAO;Username=$POSTGRES_USER;Password=[MASKED];SslMode=Require;TrustServerCertificate=true"
               echo "=== Iniciando Migration ==="
-              dotnet ef database update --connection 'Host=$(POSTGRES_HOST);Port=$(POSTGRES_PORT);Database=$(POSTGRES_DB);Username=$(POSTGRES_USER);Password=$(POSTGRES_PASSWORD);SslMode=Require;TrustServerCertificate=true' --project src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra/Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra.csproj --startup-project src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi/Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.csproj
+              dotnet ef database update --connection 'Host=$(POSTGRES_HOST);Port=$(POSTGRES_PORT);Database=$(POSTGRES_DB_GESTAO);Username=$(POSTGRES_USER);Password=$(POSTGRES_PASSWORD);SslMode=Require;TrustServerCertificate=true' --project src/Soat.Eleven.Pedidos.Infra/Soat.Eleven.Pedidos.Adapter.Infra.csproj --startup-project src/Soat.Eleven.Pedidos.Api/Soat.Eleven.Pedidos.Adapter.WebApi.csproj
           env:
             - name: POSTGRES_HOST
               valueFrom:
                 configMapKeyRef:
                   name: fastfood-config
                   key: POSTGRES_HOST
-            - name: POSTGRES_DB
+            - name: POSTGRES_DB_GESTAO
               valueFrom:
                 configMapKeyRef:
                   name: fastfood-config
-                  key: POSTGRES_DB
+                  key: POSTGRES_DB_GESTAO
             - name: POSTGRES_PORT
               valueFrom:
                 configMapKeyRef:
@@ -60,7 +61,8 @@ spec:
                   name: db-credentials
                   key: POSTGRES_PASSWORD
             - name: ConnectionStrings__PostgresConnectionString
-              value: "Host=$(POSTGRES_HOST);Port=$(POSTGRES_PORT);Database=$(POSTGRES_DB);Username=$(POSTGRES_USER);Password=$(POSTGRES_PASSWORD);SslMode=Require;TrustServerCertificate=true"
-          image: "{{ .Values.image.migratorRepository }}"
+              value: "Host=$(POSTGRES_HOST);Port=$(POSTGRES_PORT);Database=$(POSTGRES_DB_GESTAO);Username=$(POSTGRES_USER);Password=$(POSTGRES_PASSWORD);SslMode=Require;TrustServerCertificate=true"
+          image: "{{ .Values.image.migratorRepository }}:{{ .Values.image.tag }}"
           name: migrator
           imagePullPolicy: IfNotPresent
+{{- end -}}
