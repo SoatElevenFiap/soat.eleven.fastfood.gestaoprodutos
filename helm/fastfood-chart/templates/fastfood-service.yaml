@@ -2,8 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: app
-  name: app-service
+    app: gestao
+  name: app-service-gestao
   namespace: fastfood
 spec:
   ports:
