@@ -61,10 +61,10 @@ jobs:
       # 5. Build e push das imagens Docker (App + Migrator)
       - name: Build and push Docker images
         run: |
-          docker build --target final -t $REGISTRY/$APP_IMAGE_NAME:latest .
+          docker build --target final -t $REGISTRY/$APP_IMAGE_NAME:latest -f src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi/Dockerfile .
           docker push $REGISTRY/$APP_IMAGE_NAME:latest
           
-          docker build --target migrator -t $REGISTRY/$MIGRATOR_IMAGE_NAME:latest .
+          docker build --target migrator -t $REGISTRY/$MIGRATOR_IMAGE_NAME:latest -f src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi/Dockerfile .
           docker push $REGISTRY/$MIGRATOR_IMAGE_NAME:latest
 
       # 6. Conectar no AKS
