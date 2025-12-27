@@ -6,7 +6,7 @@ metadata:
   namespace: fastfood 
 data:
   POSTGRES_HOST: "{{ .Values.postgres.host }}" # <--- APONTA PARA O AZURE DB
-  POSTGRES_DB: "{{ .Values.postgres.db }}"
+  POSTGRES_DB_GESTAO: "{{ .Values.postgres.db }}"
   POSTGRES_PORT: "{{ .Values.postgres.port }}"
   ASPNETCORE_ENVIRONMENT: "Development"
   ASPNETCORE_URLS: "http://+:80"
