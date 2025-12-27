@@ -9,6 +9,8 @@ COPY src/Soat.Eleven.FastFood.GestaoProdutos.Application/*.csproj src/Soat.Eleve
 COPY src/Soat.Eleven.FastFood.GestaoProdutos.Core/*.csproj src/Soat.Eleven.FastFood.GestaoProdutos.Core/
 COPY src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra/*.csproj src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra/
 
+COPY . .
+
 RUN dotnet restore src/Soat.Eleven.FastFood.GestaoProdutos.sln
 
 COPY . .
