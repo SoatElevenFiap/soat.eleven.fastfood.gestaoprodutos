@@ -8,8 +8,8 @@ on:
 
 env:
   REGISTRY: acrfastfoodpostech.azurecr.io
-  APP_IMAGE_NAME: fastfood/pedido
-  MIGRATOR_IMAGE_NAME: fastfood/migrator-pedido
+  APP_IMAGE_NAME: fastfood/gestao-produtos
+  MIGRATOR_IMAGE_NAME: fastfood/migrator-gestao-produtos
   CHART_PATH: ./helm/fastfood-chart
   RELEASE_NAME: fastfood-release
   AKS_RESOURCE_GROUP: rg-fastfood-postech
@@ -24,10 +24,29 @@ jobs:
       contents: read
 
     steps:
+      # 1. Checkout do código
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 1. Login no Azure (OIDC)
+      # 2. Setup .NET (necessário para build das imagens)
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # ============================================
+      # DEPLOY TO AZURE
+      # ============================================
+
+      # Variáveis necessárias:
+      # AZURE_CLIENT_ID - Client ID do Azure
+      # AZURE_TENANT_ID - Tenant ID do Azure
+      # AZURE_SUBSCRIPTION_ID - Subscription ID do Azure
+      # POSTGRES_HOST - Host do PostgreSQL
+      # POSTGRES_USER - Usuário do PostgreSQL
+      # POSTGRES_PASSWORD - Senha do PostgreSQL
+
+      # 3. Login no Azure usando OIDC
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -38,52 +57,38 @@ jobs:
       - name: Azure Container Registry Login
         run: az acr login --name acrfastfoodpostech
 
-      # 3. Build e Push das imagens (Versionamento SHA + Latest)
+      # 5. Build e push das imagens Docker (App + Migrator)
       - name: Build and push Docker images
-        env:
-          IMAGE_TAG: ${{ github.sha }}
         run: |
-          # Build App
-          docker build --target final -t $REGISTRY/$APP_IMAGE_NAME:$IMAGE_TAG -t $REGISTRY/$APP_IMAGE_NAME:latest .
-          docker push $REGISTRY/$APP_IMAGE_NAME:$IMAGE_TAG
+          docker build --target final -t $REGISTRY/$APP_IMAGE_NAME:latest -f src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi/Dockerfile ./src
           docker push $REGISTRY/$APP_IMAGE_NAME:latest
           
-          # Build Migrator
-          docker build --target migrator -t $REGISTRY/$MIGRATOR_IMAGE_NAME:$IMAGE_TAG -t $REGISTRY/$MIGRATOR_IMAGE_NAME:latest .
-          docker push $REGISTRY/$MIGRATOR_IMAGE_NAME:$IMAGE_TAG
+          docker build --target migrator -t $REGISTRY/$MIGRATOR_IMAGE_NAME:latest -f src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi/Dockerfile ./src
           docker push $REGISTRY/$MIGRATOR_IMAGE_NAME:latest
 
-      # 4. Conectar no AKS
+      # 6. Conectar no AKS
       - name: Get AKS credentials
         run: |
+          rm -rf ~/.kube/config || true
           az aks get-credentials \
             --resource-group $AKS_RESOURCE_GROUP \
             --name $AKS_CLUSTER_NAME \
             --overwrite-existing \
             --admin
+          kubectl cluster-info
+          kubectl get nodes
 
-      # 5. Setup Helm
+      # 7. Criar namespace se não existir
+      - name: Create namespace
+        run: kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
+
+      # 8. Setup Helm
       - name: Setup Helm
         uses: azure/setup-helm@v3
         with:
           version: v3.15.1
 
-      # 6. Validação do Chart (Segurança extra antes de aplicar)
-      - name: Helm Lint
-        run: helm lint $CHART_PATH
-
-      - name: Create Namespace
-        run: kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
-      - name: Create ACR Secret
-        run: |
-          kubectl create secret docker-registry acr-secret \
-            --docker-server=$REGISTRY \
-            --docker-username=$(az acr credential show --name acrfastfoodpostech --query "username" -o tsv) \
-            --docker-password=$(az acr credential show --name acrfastfoodpostech --query "passwords[0].value" -o tsv) \
-            --namespace $NAMESPACE \
-            --dry-run=client -o yaml | kubectl apply -f -
-
-      # 7. Executar Migration Job
+      # 9. Executar Migration Job
       - name: Run Database Migration
         env:
           IMAGE_TAG: ${{ github.sha }}
@@ -96,7 +101,7 @@ jobs:
             --set image.migratorRepository=$REGISTRY/$MIGRATOR_IMAGE_NAME \
             --set image.tag=$IMAGE_TAG \
             --set postgres.host="${{ secrets.POSTGRES_HOST }}" \
-            --set postgres.db="${{ secrets.POSTGRES_DB_GESTAO }}" \
+            --set postgres.db="${{ secrets.POSTGRES_DB_PEDIDOS }}" \
             --set credentials.user="${{ secrets.POSTGRES_USER }}" \
             --set credentials.password="${{ secrets.POSTGRES_PASSWORD }}" \
             --namespace $NAMESPACE \
@@ -125,7 +130,7 @@ jobs:
             --namespace $NAMESPACE \
             --create-namespace \
             --set postgres.host="${{ secrets.POSTGRES_HOST }}" \
-            --set postgres.db="${{ secrets.POSTGRES_DB_GESTAO }}" \
+            --set postgres.db="${{ secrets.POSTGRES_DB_PEDIDOS }}" \
             --set postgres.port="5432" \
             --set credentials.user="${{ secrets.POSTGRES_USER }}" \
             --set credentials.password="${{ secrets.POSTGRES_PASSWORD }}" \
