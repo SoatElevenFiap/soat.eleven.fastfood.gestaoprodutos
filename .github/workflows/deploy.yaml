@@ -78,16 +78,25 @@ jobs:
           kubectl cluster-info
           kubectl get nodes
 
-      # 7. Criar namespace se não existir
-      - name: Create namespace
-        run: kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
-
       # 8. Setup Helm
       - name: Setup Helm
         uses: azure/setup-helm@v3
         with:
           version: v3.15.1
 
+      - name: Helm Lint
+        run: helm lint $CHART_PATH
+
+      - name: Create Namespace
+        run: kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
+      - name: Create ACR Secret
+        run: |
+          kubectl create secret docker-registry acr-secret \
+            --docker-server=$REGISTRY \
+            --docker-username=$(az acr credential show --name acrfastfoodpostech --query "username" -o tsv) \
+            --docker-password=$(az acr credential show --name acrfastfoodpostech --query "passwords[0].value" -o tsv) \
+            --namespace $NAMESPACE \
+            --dry-run=client -o yaml | kubectl apply -f -
       # 9. Executar Migration Job
       - name: Run Database Migration
         env:

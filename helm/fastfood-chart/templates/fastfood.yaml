@@ -2,24 +2,24 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: app
-  name: app
+    app: gestao
+  name: gestao
   namespace: fastfood
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: app
+      app: gestao
   template:
     metadata:
       labels:
-        app: app
+        app: gestao
     spec:
       restartPolicy: Always
       imagePullSecrets: 
         - name: acr-secret
       containers:
-        - name: app
+        - name: gestao
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           resources:
