@@ -9,11 +9,11 @@ COPY src/Soat.Eleven.FastFood.GestaoProdutos.Application/*.csproj src/Soat.Eleve
 COPY src/Soat.Eleven.FastFood.GestaoProdutos.Core/*.csproj src/Soat.Eleven.FastFood.GestaoProdutos.Core/
 COPY src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra/*.csproj src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra/
 
-RUN dotnet restore src/soat.eleven.pedido.sln
+RUN dotnet restore src/Soat.Eleven.FastFood.GestaoProdutos.sln
 
 COPY . .
 
-RUN dotnet publish "src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi/Soat.Eleven.FastFoodGestaoProdutos.Adapter.WebApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi/Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS migrator
 
