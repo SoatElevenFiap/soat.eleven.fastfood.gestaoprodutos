@@ -29,6 +29,13 @@ FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
+# Esta fase é usada para executar migrations no banco de dados
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS migrator
+WORKDIR /src
+COPY --from=build /src /src
+WORKDIR "/src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra"
+ENTRYPOINT ["dotnet", "ef", "database", "update", "--project", ".", "--startup-project", "../Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi"]
+
 # Esta fase é usada na produção ou quando executada no VS no modo normal (padrão quando não está usando a configuração de Depuração)
 FROM base AS final
 USER $APP_UID
