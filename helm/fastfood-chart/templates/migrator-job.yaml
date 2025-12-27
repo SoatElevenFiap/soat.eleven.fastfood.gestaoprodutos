@@ -1,16 +1,16 @@
-{{- if not (lookup "batch/v1" "Job" .Release.Namespace "migrator_gestao") -}}
+{{- if not (lookup "batch/v1" "Job" .Release.Namespace "migrator-gestao") -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
   labels:
-    app: migrator_gestao
-  name: migrator_gestao
+    app: migrator-gestao
+  name: migrator-gestao
   namespace: fastfood
 spec:
   template:
     metadata:
       labels:
-        app: migrator_gestao
+        app: migrator-gestao
     spec:
       restartPolicy: OnFailure
       imagePullSecrets: 
@@ -63,6 +63,6 @@ spec:
             - name: ConnectionStrings__PostgresConnectionString
               value: "Host=$(POSTGRES_HOST);Port=$(POSTGRES_PORT);Database=$(POSTGRES_DB_GESTAO);Username=$(POSTGRES_USER);Password=$(POSTGRES_PASSWORD);SslMode=Require;TrustServerCertificate=true"
           image: "{{ .Values.image.migratorRepository }}:{{ .Values.image.tag }}"
-          name: migrator_gestao
+          name: migrator-gestao
           imagePullPolicy: IfNotPresent
 {{- end -}}
