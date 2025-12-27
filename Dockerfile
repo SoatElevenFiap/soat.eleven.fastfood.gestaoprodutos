@@ -7,7 +7,7 @@ COPY src/Soat.Eleven.FastFood.GestaoProdutos.Tests/*.csproj src/Soat.Eleven.Fast
 COPY src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi/*.csproj src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi/
 COPY src/Soat.Eleven.FastFood.GestaoProdutos.Application/*.csproj src/Soat.Eleven.FastFood.GestaoProdutos.Application/
 COPY src/Soat.Eleven.FastFood.GestaoProdutos.Core/*.csproj src/Soat.Eleven.FastFood.GestaoProdutos.Core/
-COPY Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra/*.csproj Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra/
+COPY src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra/*.csproj src/Soat.Eleven.FastFood.GestaoProdutos.Adapter.Infra/
 
 RUN dotnet restore src/soat.eleven.pedido.sln
 
