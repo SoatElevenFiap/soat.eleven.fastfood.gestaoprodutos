@@ -1,45 +1,48 @@
-name: Quality Check
+name: CI - Build, Test and SonarCloud Analysis
 
 on:
-  push:
+  pull_request:
     branches:
       - main
-  pull_request:
-    types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 jobs:
-  build:
-    name: Build and analyze
+  build-and-analyze:
     runs-on: ubuntu-latest
-    steps:
-      # Configura Java 17 (requerido pelo SonarScanner)
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: 'zulu'
+    permissions:
+      contents: read
+      pull-requests: write
 
-      # Configura .NET 8.0 para build e testes
+    steps:
+      # 1. Checkout do código com histórico completo para o SonarCloud
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2. Setup .NET
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
-      # Faz checkout do código com histórico completo para análise incremental
-      - uses: actions/checkout@v4
+      # 3. Setup Java (necessário para o SonarCloud Scanner)
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
-          fetch-depth: 0
+          distribution: 'temurin'
+          java-version: '17'
 
-      # Cache dos pacotes do SonarQube para acelerar builds subsequentes
-      - name: Cache SonarQube Cloud packages
+      # 4. Cache SonarCloud packages
+      - name: Cache SonarCloud packages
         uses: actions/cache@v4
         with:
-          path: ~/.sonar/cache
+          path: ~/sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      # Cache do scanner do SonarQube
-      - name: Cache SonarQube Cloud scanner
+      # 5. Cache SonarCloud scanner
+      - name: Cache SonarCloud scanner
         id: cache-sonar-scanner
         uses: actions/cache@v4
         with:
@@ -47,34 +50,72 @@ jobs:
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
 
-      # Instala o SonarScanner se não estiver em cache
-      - name: Install SonarQube Cloud scanner
+      # 6. Install SonarCloud scanner
+      - name: Install SonarCloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         run: |
           mkdir -p ./.sonar/scanner
           dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
 
-      # Executa build, testes com cobertura e envia para SonarCloud
-      - name: Build and analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Necessário para análise de PRs
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      # 7. Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore src/Soat.Eleven.FastFood.GestaoProdutos.sln
+
+      # 8. Begin SonarCloud analysis
+      - name: Begin SonarCloud analysis
         run: |
           ./.sonar/scanner/dotnet-sonarscanner begin \
             /k:"SoatElevenFiap_soat.eleven.fastfood.gestaoprodutos" \
             /o:"soatelevenfiap" \
-            /d:sonar.token="${SONAR_TOKEN}" \
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.opencover.reportsPaths="**/TestResults/*/coverage.opencover.xml" \
-            /d:sonar.exclusions="**/Migrations/**,**/helm/**"
-          
-          dotnet build src/Soat.Eleven.FastFood.GestaoProdutos.sln
-          
-          dotnet test src/Soat.Eleven.FastFood.GestaoProdutos.Tests/Soat.Eleven.FastFood.GestaoProdutos.Tests.csproj \
+            /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
+            /d:sonar.exclusions="**/Migrations/**,**/workflows/**,**/fastfood-chart/**,**/Dockerfile,**/*.yaml,**/Configuration/**,**/*Configuration.cs,**/Program.cs" \
+            /d:sonar.coverage.exclusions="**/Configuration/**,**/*Configuration.cs,**/Program.cs,**/Migrations/**" \
+            /d:sonar.qualitygate.wait=true
+
+      # 9. Build project
+      - name: Build project
+        run: dotnet build src/Soat.Eleven.FastFood.GestaoProdutos.sln --configuration Release --no-restore
+
+      # 10. Run tests with coverage
+      - name: Run tests
+        run: |
+          dotnet test src/Soat.Eleven.FastFood.GestaoProdutos.sln \
             --no-build \
+            --configuration Release \
             --verbosity normal \
             --collect:"XPlat Code Coverage" \
+            --results-directory ./coverage \
             -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
-          
-          ./.sonar/scanner/dotnet-sonarscanner end \
-            /d:sonar.token="${SONAR_TOKEN}"
+
+      # 11. End SonarCloud analysis (falha se Quality Gate não passar)
+      - name: End SonarCloud analysis
+        id: sonar
+        run: ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+
+      # 12. Comentar no PR se falhar
+      - name: Comment on PR if Quality Gate failed
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ **Quality Gate Failed!**\n\nA cobertura de código não atingiu o mínimo de **80%**.\n\nPor favor, adicione mais testes antes de fazer o merge.\n\n[Ver detalhes no SonarCloud](https://sonarcloud.io/dashboard?id=SoatElevenFiap_soat.eleven.fastfood.gestaoprodutos)'
+            })
+
+      # 13. Comentar no PR se passar
+      - name: Comment on PR if Quality Gate passed
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ **Quality Gate Passed!**\n\nA cobertura de código atingiu o mínimo de **80%**.\n\nO PR está pronto para merge.\n\n[Ver detalhes no SonarCloud](https://sonarcloud.io/dashboard?id=SoatElevenFiap_soat.eleven.fastfood.gestaoprodutos)'
+            })
