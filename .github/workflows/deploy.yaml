@@ -147,7 +147,7 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           echo "🧹 Removendo releases e recursos órfãos anteriores..."
-          helm uninstall pedidos-release -n $NAMESPACE --ignore-not-found || true
+          helm uninstall gestao-produtos-release -n $NAMESPACE --ignore-not-found || true
           kubectl delete configmap gestao-config -n $NAMESPACE --ignore-not-found=true
           kubectl delete secret db-credentials-gestao -n $NAMESPACE --ignore-not-found=true
 
