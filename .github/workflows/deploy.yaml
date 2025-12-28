@@ -3,7 +3,7 @@ name: CD - Deploy FastFood to AKS
 on:
   push:
     branches:
-      - main
+      - cd/teste
   workflow_dispatch:
 
 env:
@@ -161,5 +161,7 @@ jobs:
             --set credentials.user="${{ secrets.POSTGRES_USER }}" \
             --set credentials.password="${{ secrets.POSTGRES_PASSWORD }}" \
             --set image.repository=$REGISTRY/$APP_IMAGE_NAME \
+            --set pagamento.baseUrl="${{ secrets.PAGAMENTO_BASE_URL }}" \
+            --set pagamento.clientId="${{ secrets.PAGAMENTO_CLIENT_ID }}" \
             --set image.tag=${{ github.sha }} \
             --atomic

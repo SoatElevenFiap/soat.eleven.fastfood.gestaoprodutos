@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: fastfood-ingress
+  name: gestao-ingress
   namespace: fastfood
   annotations:
     appgw.ingress.kubernetes.io/backend-path-prefix: "/"
