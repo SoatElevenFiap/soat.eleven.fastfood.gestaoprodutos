@@ -120,10 +120,10 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           echo "🧹 Limpando job anterior..."
-          kubectl delete job migrator-gestao -n $NAMESPACE --ignore-not-found=true
+          kubectl delete job migrator-job-gestao -n $NAMESPACE --ignore-not-found=true
           
           echo "🚀 Renderizando e aplicando Job de Migração..."
-          helm template migrator-job $CHART_PATH \
+          helm template migrator-job-gestao $CHART_PATH \
             --set image.migratorRepository=$REGISTRY/$MIGRATOR_IMAGE_NAME \
             --set image.tag=$IMAGE_TAG \
             --set postgres.host="${{ secrets.POSTGRES_HOST }}" \
@@ -131,7 +131,7 @@ jobs:
             --set credentials.user="${{ secrets.POSTGRES_USER }}" \
             --set credentials.password="${{ secrets.POSTGRES_PASSWORD }}" \
             --namespace $NAMESPACE \
-            --show-only templates/migrator-job.yaml \
+            --show-only templates/migrator-job-gestao.yaml \
             --show-only templates/config-map.yaml \
             --show-only templates/secret.yaml | kubectl apply -f -
           
@@ -143,7 +143,12 @@ jobs:
         env:
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          # Atualiza/Cria secret do ACR para o K8s puxar a imagem
+          echo "🧹 Removendo releases e recursos órfãos anteriores..."
+          helm uninstall pedidos-release -n $NAMESPACE --ignore-not-found || true
+          kubectl delete configmap gestao-config -n $NAMESPACE --ignore-not-found=true
+          kubectl delete secret db-credentials -n $NAMESPACE --ignore-not-found=true
+
+          echo "🔐 Atualiza/Cria secret do ACR..."
           kubectl create secret docker-registry acr-secret \
             --docker-server=$REGISTRY \
             --docker-username=$(az acr credential show --name acrfastfoodpostech --query "username" -o tsv) \
@@ -151,17 +156,17 @@ jobs:
             --namespace $NAMESPACE \
             --dry-run=client -o yaml | kubectl apply -f -
           
-          # Upgrade Atômico (Se falhar, desfaz tudo)
+          echo "🚀 Deploy Atômico com Helm..."
           helm upgrade --install $RELEASE_NAME $CHART_PATH \
             --namespace $NAMESPACE \
             --create-namespace \
             --set postgres.host="${{ secrets.POSTGRES_HOST }}" \
-            --set postgres.db="${{ secrets.POSTGRES_DB_GESTAO }}" \
+            --set postgres.db="${{ secrets.POSTGRES_DB_PEDIDOS }}" \
             --set postgres.port="5432" \
             --set credentials.user="${{ secrets.POSTGRES_USER }}" \
             --set credentials.password="${{ secrets.POSTGRES_PASSWORD }}" \
-            --set image.repository=$REGISTRY/$APP_IMAGE_NAME \
             --set pagamento.baseUrl="${{ secrets.PAGAMENTO_BASE_URL }}" \
             --set pagamento.clientId="${{ secrets.PAGAMENTO_CLIENT_ID }}" \
+            --set image.repository=$REGISTRY/$APP_IMAGE_NAME \
             --set image.tag=${{ github.sha }} \
             --atomic
