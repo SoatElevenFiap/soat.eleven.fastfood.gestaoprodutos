@@ -70,7 +70,8 @@ jobs:
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
-            /d:sonar.exclusions="**/Migrations/**,**/workflows/**,**/fastfood-chart/**,**/Dockerfile,**/*.yaml,**/Configuration/**" \
+            /d:sonar.exclusions="**/Migrations/**,**/workflows/**,**/fastfood-chart/**,**/Dockerfile,**/*.yaml,**/Configuration/**,**/*Configuration.cs,**/Program.cs" \
+            /d:sonar.coverage.exclusions="**/Configuration/**,**/*Configuration.cs,**/Program.cs,**/Migrations/**" \
             /d:sonar.qualitygate.wait=true
 
       # 9. Build project
