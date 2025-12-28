@@ -149,7 +149,7 @@ jobs:
           echo "🧹 Removendo releases e recursos órfãos anteriores..."
           helm uninstall pedidos-release -n $NAMESPACE --ignore-not-found || true
           kubectl delete configmap gestao-config -n $NAMESPACE --ignore-not-found=true
-          kubectl delete secret db-credentials -n $NAMESPACE --ignore-not-found=true
+          kubectl delete secret db-credentials-gestao -n $NAMESPACE --ignore-not-found=true
 
           echo "🔐 Atualiza/Cria secret do ACR..."
           kubectl create secret docker-registry acr-secret \
