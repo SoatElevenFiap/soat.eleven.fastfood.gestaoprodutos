@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Soat.Eleven.FastFood.GestaoProdutos.Application.Controllers;
 using Soat.Eleven.FastFood.GestaoProdutos.Core.DTOs.Produtos;
+using Soat.Eleven.FastFood.GestaoProdutos.Core.Enums;
 using Soat.Eleven.FastFood.GestaoProdutos.Core.Interfaces.DataSources;
 
 namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
@@ -19,7 +21,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ProdutoDto>>> GetProdutos(
             [FromQuery] bool incluirInativos = false,
             [FromQuery] Guid? categoriaId = null)
@@ -37,7 +39,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
         }
 
         [HttpGet("{id}")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<ProdutoDto>> GetProduto(Guid id)
         {
             var controller = new ProdutoController(_produtoDataSource, _categoriaSource);
@@ -50,7 +52,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
         }
 
         [HttpPost]
-        //[Authorize(PolicyRole.Administrador)]
+        [Authorize(PolicyRole.Administrador)]
         public async Task<ActionResult<ProdutoDto>> PostProduto(CriarProdutoDto produto)
         {
             try
@@ -67,7 +69,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
         }
 
         [HttpPut("{id}")]
-        //[Authorize(PolicyRole.Administrador)]
+        [Authorize(PolicyRole.Administrador)]
         public async Task<IActionResult> PutProduto(Guid id, AtualizarProdutoDto produto)
         {
             try
@@ -88,7 +90,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
         }
 
         [HttpDelete("{id}")]
-        //[Authorize(PolicyRole.Administrador)]
+        [Authorize(PolicyRole.Administrador)]
         public async Task<IActionResult> DeleteProduto(Guid id)
         {
             try
@@ -104,7 +106,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
         }
 
         [HttpPost("{id}/reativar")]
-        //[Authorize(PolicyRole.Administrador)]
+        [Authorize(PolicyRole.Administrador)]
         public async Task<IActionResult> ReativarProduto(Guid id)
         {
             try

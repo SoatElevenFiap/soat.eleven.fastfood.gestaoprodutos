@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Soat.Eleven.FastFood.GestaoProdutos.Application.Controllers;
 using Soat.Eleven.FastFood.GestaoProdutos.Core.DTOs.Categorias;
+using Soat.Eleven.FastFood.GestaoProdutos.Core.Enums;
 using Soat.Eleven.FastFood.GestaoProdutos.Core.Interfaces.DataSources;
 
 namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
@@ -17,7 +19,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<CategoriaProdutoDto>>> GetCategorias()
         {
             var controller = new CategoriaProdutoController(_categoriaDataSource);
@@ -26,7 +28,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
         }
 
         [HttpGet("{id}")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<CategoriaProdutoDto>> GetCategoria(Guid id)
         {
             var controller = new CategoriaProdutoController(_categoriaDataSource);
@@ -39,7 +41,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
         }
 
         [HttpPost]
-        //[Authorize(PolicyRole.Administrador)]
+        [Authorize(PolicyRole.Administrador)]
         public async Task<ActionResult<CategoriaProdutoDto>> PostCategoria(CriarCategoriaDto categoria)
         {
             var controller = new CategoriaProdutoController(_categoriaDataSource);
@@ -48,7 +50,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
         }
 
         [HttpPut("{id}")]
-        //[Authorize(PolicyRole.Administrador)]
+        [Authorize(PolicyRole.Administrador)]
         public async Task<IActionResult> PutCategoria(Guid id, AtualizarCategoriaDto categoria)
         {
             try
@@ -68,7 +70,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
         }
 
         [HttpDelete("{id}")]
-        //[Authorize(PolicyRole.Administrador)]
+        [Authorize(PolicyRole.Administrador)]
         public async Task<IActionResult> DeleteCategoria(Guid id)
         {
             try
@@ -84,7 +86,7 @@ namespace Soat.Eleven.FastFood.GestaoProdutos.Adapter.WebApi.EndPoints
         }
 
         [HttpPost("{id}/reativar")]
-        //[Authorize(PolicyRole.Administrador)]
+        [Authorize(PolicyRole.Administrador)]
         public async Task<IActionResult> ReativarCategoria(Guid id)
         {
             try

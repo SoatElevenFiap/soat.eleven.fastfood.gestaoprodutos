@@ -8,6 +8,7 @@ using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
+builder.ConfigureKeyVault();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -29,8 +30,7 @@ if (builder.Environment.IsEnvironment("Testing"))
 else
 {
     // Use PostgreSQL for production
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-        ?? Environment.GetEnvironmentVariable("CONNECTION_STRING");
+    var connectionString = builder.Configuration.GetConnectionString("PostgresConnectionString");
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseNpgsql(connectionString));
 }
@@ -49,7 +49,7 @@ builder.Services.AddAuthentication(option =>
         option.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            //IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["SECRET_KEY_PASSWORK"] ?? SECRET_KEY_PASS)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!)),
             ValidateIssuer = false,
             ValidateAudience = false
         };
