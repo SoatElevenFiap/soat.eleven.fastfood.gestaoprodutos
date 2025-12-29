@@ -42,7 +42,7 @@ jobs:
       # AZURE_CLIENT_ID - Client ID do Azure
       # AZURE_TENANT_ID - Tenant ID do Azure
       # AZURE_SUBSCRIPTION_ID - Subscription ID do Azure
-      # POSTGRES_HOST - Host do PostgreSQL
+      # POSTGRES_HOST_KAUAN - Host do PostgreSQL
       # POSTGRES_USER - Usuário do PostgreSQL
       # POSTGRES_PASSWORD - Senha do PostgreSQL
 
@@ -119,16 +119,14 @@ jobs:
         env:
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          echo "🧹 Limpando job anterior..."
-          # Nome alterado para migrator-gestao (conforme seu metadata.name)
+          echo "🧹 Limpando apenas o JOB anterior (não as configs)..."
           kubectl delete job migrator-gestao -n $NAMESPACE --ignore-not-found=true
           
-          echo "🚀 Renderizando e aplicando Job de Migração..."
-          # Ajustado para os nomes de arquivos que aparecem no seu VS Code (Imagem 2)
-          helm template migrator-gestao $CHART_PATH \
+          echo "🚀 Rodando Migration..."
+          helm template $RELEASE_NAME $CHART_PATH \
             --set image.migratorRepository=$REGISTRY/$MIGRATOR_IMAGE_NAME \
             --set image.tag=$IMAGE_TAG \
-            --set postgres.host="${{ secrets.POSTGRES_HOST }}" \
+            --set postgres.host="${{ secrets.POSTGRES_HOST_KAUAN }}" \
             --set postgres.db="${{ secrets.POSTGRES_DB_GESTAO }}" \
             --set credentials.user="${{ secrets.POSTGRES_USER }}" \
             --set credentials.password="${{ secrets.POSTGRES_PASSWORD }}" \
@@ -137,8 +135,6 @@ jobs:
             --show-only templates/config-map-gestao.yaml \
             --show-only templates/secret-gestao.yaml | kubectl apply -f -
           
-          echo "⏳ Aguardando migração finalizar..."
-          # Nome alterado para migrator-gestao para coincidir com o metadata.name do Job
           kubectl wait --for=condition=complete job/migrator-gestao -n $NAMESPACE --timeout=300s
 
       # 8. Deploy da Aplicação (Com rollback automático)
@@ -151,7 +147,7 @@ jobs:
           kubectl delete configmap gestao-config -n $NAMESPACE --ignore-not-found=true
           kubectl delete secret db-credentials-gestao -n $NAMESPACE --ignore-not-found=true
 
-          echo "🔐 Atualiza/Cria secret do ACR..."
+          echo "🔐 Atualiza secret do ACR..."
           kubectl create secret docker-registry acr-secret \
             --docker-server=$REGISTRY \
             --docker-username=$(az acr credential show --name acrfastfoodpostech --query "username" -o tsv) \
@@ -159,11 +155,10 @@ jobs:
             --namespace $NAMESPACE \
             --dry-run=client -o yaml | kubectl apply -f -
           
-          echo "🚀 Deploy Atômico com Helm..."
+          echo "🚀 Deploy Atômico"
           helm upgrade --install $RELEASE_NAME $CHART_PATH \
             --namespace $NAMESPACE \
-            --create-namespace \
-            --set postgres.host="${{ secrets.POSTGRES_HOST }}" \
+            --set postgres.host="${{ secrets.POSTGRES_HOST_KAUAN }}" \
             --set postgres.db="${{ secrets.POSTGRES_DB_GESTAO }}" \
             --set postgres.port="5432" \
             --set credentials.user="${{ secrets.POSTGRES_USER }}" \
