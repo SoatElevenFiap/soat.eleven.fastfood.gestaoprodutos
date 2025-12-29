@@ -1,15 +1,12 @@
-{{- if not (lookup "v1" "ConfigMap" .Release.Namespace "fastfood-config") -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: fastfood-config
-  namespace: fastfood 
+  namespace: {{ .Release.Namespace }}
 data:
-  POSTGRES_HOST: "{{ .Values.postgres.host }}" # <--- APONTA PARA O AZURE DB
+  POSTGRES_HOST: "{{ .Values.postgres.host }}"
   POSTGRES_DB_GESTAO: "{{ .Values.postgres.db }}"
   POSTGRES_PORT: "{{ .Values.postgres.port }}"
-  ASPNETCORE_ENVIRONMENT: "Development"
+  ASPNETCORE_ENVIRONMENT: "Production"
   ASPNETCORE_URLS: "http://+:80"
-  # PAGAMENTO_CLIENT_ID: "{{ .Values.pagamento.clientId }}"
-  # PAGAMENTO_BASE_URL: "{{ .Values.pagamento.baseUrl }}"
-  {{- end -}}
+  JWT_SECRET_KEY: "MinhaChaveSuperSecretaQueTemMaisDe32Caracteres123!"
