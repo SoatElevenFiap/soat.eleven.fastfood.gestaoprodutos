@@ -113,6 +113,15 @@ O projeto possui uma cobertura completa de testes unitários e de integração, 
 - **Entity Framework InMemory** - Banco em memória para testes
 - **ASP.NET Core Testing** - Testes de integração da API
 
+### Resultados de Teste Locais
+![alt text](img/teste-local.png)
+
+### Resultados de Execução via Pull Request no GitHub
+![alt text](img/git_quality.png)
+
+### Resultados de Coverage no SonarQube Cloud
+![alt text](img/sonar.png)
+
 ---
 
 ## Deploy e Infraestrutura
