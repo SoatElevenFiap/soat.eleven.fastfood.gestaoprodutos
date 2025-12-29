@@ -138,7 +138,15 @@ jobs:
           echo "⏳ Aguardando migração finalizar..."
           kubectl wait --for=condition=complete job/migrator-gestao -n $NAMESPACE --timeout=300s
 
-      # 8. Deploy da Aplicação (Com rollback automático)
+      # 8. Limpar recursos órfãos (se existirem)
+      - name: Clean up orphaned resources
+        run: |
+          echo "🧹 Removendo releases e recursos órfãos anteriores..."
+          helm uninstall $RELEASE_NAME -n $NAMESPACE --ignore-not-found || true
+          kubectl delete configmap gestao-produtos-config -n $NAMESPACE --ignore-not-found || true
+          sleep 5
+
+      # 9. Deploy da Aplicação (Com rollback automático)
       - name: Deploy Application via Helm
         env:
           IMAGE_TAG: ${{ github.sha }}
@@ -151,7 +159,7 @@ jobs:
             --namespace $NAMESPACE \
             --dry-run=client -o yaml | kubectl apply -f -
           
-          # Upgrade Atômico (Se falhar, desfaz tudo)
+          # Upgrade Atômico (Se falhar, desfaz tudo) com timeout estendido
           helm upgrade --install $RELEASE_NAME $CHART_PATH \
             --namespace $NAMESPACE \
             --create-namespace \
@@ -162,4 +170,14 @@ jobs:
             --set credentials.password="${{ secrets.POSTGRES_PASSWORD }}" \
             --set image.repository=$REGISTRY/$APP_IMAGE_NAME \
             --set image.tag=${{ github.sha }} \
+            --timeout=10m \
+            --wait \
             --atomic
+
+      # 10. Verificar status do deployment
+      - name: Verify Deployment
+        run: |
+          echo "📊 Verificando status do deployment..."
+          kubectl rollout status deployment/gestao-produtos -n $NAMESPACE --timeout=5m
+          kubectl get pods -n $NAMESPACE -l app=gestao-produtos
+          echo "✅ Deploy concluído com sucesso!"
