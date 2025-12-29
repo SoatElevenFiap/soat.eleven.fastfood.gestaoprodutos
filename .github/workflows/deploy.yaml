@@ -144,6 +144,8 @@ jobs:
           echo "🧹 Removendo releases e recursos órfãos anteriores..."
           helm uninstall $RELEASE_NAME -n $NAMESPACE --ignore-not-found || true
           kubectl delete configmap gestao-produtos-config -n $NAMESPACE --ignore-not-found || true
+          kubectl delete configmap fastfood-config -n $NAMESPACE --ignore-not-found || true
+          kubectl delete secret db-credentials -n $NAMESPACE --ignore-not-found || true
           sleep 5
 
       # 9. Deploy da Aplicação (Com rollback automático)
